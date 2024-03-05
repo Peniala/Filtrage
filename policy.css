@@ -14,7 +14,7 @@ form fieldset{
     position: relative;
 }
 form input[type="submit"]{
-    border: 1px solid #fff;
+    border: 1px solid var(--font);
     border-radius: 5px;
     margin: 0;
     position: absolute;
@@ -25,4 +25,27 @@ form input[type="submit"]{
 }
 .center fieldset h1{
     text-transform: uppercase;
+}
+.center .box-button{
+    border: none;
+    text-align: center;
+}
+.center .box-button button{
+    padding: 0.7vw;
+    background-color: #000;
+    color: var(--font);
+    border: 1px solid;
+    width: 25%;
+}
+.center .box-button button:hover{
+    box-shadow: 0px 0px 4px rgb(172, 168, 168);
+}
+@media screen and (max-width: 700px) {
+    .center .box-button button{
+        width: auto;
+    }
+    form input[type="submit"]{
+        width: auto;
+        left: 80%;
+    }
 }

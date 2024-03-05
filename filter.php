@@ -14,6 +14,7 @@
         <a href="filter.php"><div class="link">Rules</div></a>
         <a href="status.php"><div class="link">Status</div></a>
         <a href=""><div class="link">Save</div></a>
+        <a href=""><div class="link">Help</div></a>
     </nav>
     <section>
         <fieldset class="center">
@@ -35,9 +36,17 @@
                         <input type="radio" name="target" id="reject" value="reject">
                         <label for="reject">REJECT</label>
                     </fieldset>
-                    <input type="text" name="protocol" placeholder="PROTOCOL" class="hover-style">
+                    <fieldset class="hover-style">
+                        <legend>Protocol</legend>
+                        <input type="radio" name="protocol" id="accept" value="accept">
+                        <label for="accept">ACCEPT</label>
+                        <input type="radio" name="protocol" id="drop" value="drop">
+                        <label for="drop">DROP</label>
+                        <input type="radio" name="protocol" id="reject" value="reject">
+                        <label for="reject">REJECT</label>
+                    </fieldset>
                 </div>
-                <fieldset>
+                <fieldset class="with-add">
                     <legend>Port</legend>
                 </fieldset>
                 <div class="target-policy">
@@ -48,6 +57,14 @@
                         <label for="dest">Destination</label>
                     </fieldset>
                 </div>
+                <fieldset class="with-add">
+                    <legend>IP</legend>
+                    <input type="text" name="protocol" placeholder="IP" class="hover-style">
+                </fieldset>
+                <fieldset class="with-add">
+                    <legend>MAC</legend>
+                    <input type="text" name="protocol" placeholder="MAC" class="hover-style">
+                </fieldset>
                 <div class="under">
                     <div class="over">
                         <i class="fa-sharp fa-solid fa-check" ></i><input type="submit" value="Valid">

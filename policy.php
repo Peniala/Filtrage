@@ -18,6 +18,7 @@
         <a href="filter.php"><div class="link">Rules</div></a>
         <a href="status.php"><div class="link">Status</div></a>
         <a href=""><div class="link">Save</div></a>
+        <a href=""><div class="link">Help</div></a>
     </nav>
     <section>
         <fieldset class="center">
@@ -25,39 +26,37 @@
             <form action="policy.php" method="get">
                 <fieldset class="hover-style">
                     <legend>Input</legend>
-                    <input type="radio" name="pInput" id="acceptIn" value="accept" <?php verifyChecked($pInput,"accept");?> >
+                    <input type="radio" name="pInput" id="acceptIn" value="ACCEPT" <?php if(!empty($_GET["pInput"])) { verifyChecked($pInput,"ACCEPT");} else verifyChecked($policy[0],"ACCEPT"); ?> >
                     <label for="acceptIn">ACCEPT</label>
-                    <input type="radio" name="pInput" id="dropIn" value="drop" <?php verifyChecked($pInput,"drop");?> >
+                    <input type="radio" name="pInput" id="dropIn" value="DROP" <?php if(!empty($_GET["pInput"])) { verifyChecked($pInput,"DROP");} else verifyChecked($policy[0],"DROP"); ?> >
                     <label for="dropIn">DROP</label>
-                    <input type="radio" name="pInput" id="rejectIn" value="reject" <?php verifyChecked($pInput,"reject");?> >
-                    <label for="rejectIn">REJECT</label>
                     <abbr title="Commit change"><input type="submit" value=">" class="sub"></abbr>
                 </fieldset>
             </form>
             <form action="policy.php" method="get">
                 <fieldset class="hover-style">
                     <legend>Forward</legend>
-                    <input type="radio" name="pForward" id="acceptFor" value="accept" <?php verifyChecked($pForward,"accept");?> >
+                    <input type="radio" name="pForward" id="acceptFor" value="ACCEPT" <?php if(!empty($_GET["pForward"])) { verifyChecked($pForward,"ACCEPT");} else verifyChecked($policy[1],"ACCEPT"); ?> >
                     <label for="acceptFor">ACCEPT</label>
-                    <input type="radio" name="pForward" id="dropFor" value="drop" <?php verifyChecked($pForward,"drop");?> >
+                    <input type="radio" name="pForward" id="dropFor" value="DROP" <?php if(!empty($_GET["pForward"])) { verifyChecked($pForward,"DROP");} else verifyChecked($policy[1],"DROP"); ?> >
                     <label for="dropFor">DROP</label>
-                    <input type="radio" name="pForward" id="rejectFor" value="reject" <?php verifyChecked($pForward,"reject");?> >
-                    <label for="rejectFor">REJECT</label>
                     <abbr title="Commit change"><input type="submit" value=">" class="sub"></abbr>
                 </fieldset>
             </form>
             <form action="policy.php" method="get">
                 <fieldset class="hover-style">
                     <legend>Output</legend>
-                    <input type="radio" name="pOutput" id="acceptOut" value="accept" <?php verifyChecked($pOutput,"accept");?> >
+                    <input type="radio" name="pOutput" id="acceptOut" value="ACCEPT" <?php if(!empty($_GET["pOutput"])) { verifyChecked($pOutput,"ACCEPT");} else verifyChecked($policy[2],"ACCEPT"); ?> >
                     <label for="acceptOut">ACCEPT</label>
-                    <input type="radio" name="pOutput" id="dropOut" value="drop" <?php verifyChecked($pOutput,"drop");?> >
+                    <input type="radio" name="pOutput" id="dropOut" value="DROP" <?php if(!empty($_GET["pOutput"])) { verifyChecked($pOutput,"DROP");} else verifyChecked($policy[2],"DROP"); ?> >
                     <label for="dropOut">DROP</label>
-                    <input type="radio" name="pOutput" id="rejectOut" value="reject" <?php verifyChecked($pOutput,"reject"); ?> >
-                    <label for="rejectOut">REJECT</label>
                     <abbr title="Commit change"><input type="submit" value=">" class="sub"></abbr>
                 </fieldset>
-            </form> 
+            </form>
+            <fieldset class="box-button">
+                <a href="policy.php?pInput=ACCEPT&pForward=ACCEPT&pOutput=ACCEPT"><button>ACCEPT ALL</button></a>
+                <a href="policy.php?pInput=DROP&pForward=DROP&pOutput=DROP"><button>DROP ALL</button></a>
+            </fieldset>
         </fieldset>
         <fieldset class="center target-policy">
             <legend class="lparts">Status Policy</legend>

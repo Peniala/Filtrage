@@ -75,6 +75,9 @@ body section .center .lparts{
 section .center form .target-policy{
     padding: 0vw;
 }
+section .center .with-add{
+    margin: 2vw;
+}
 section .center form > *, .target-policy > *{
     margin: 1vw;
     padding: 1vw;

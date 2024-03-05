@@ -1,0 +1,5 @@
+section fieldset legend{
+    font-size: var(--text);
+    color: var(--font);
+    padding: 5px;
+}
