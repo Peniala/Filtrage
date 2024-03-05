@@ -1,5 +1,10 @@
 <?php
 
+function setAlert($modif){
+    //echo "<div class =\"alert\">Voulez-vous vraiment : ".$modif."</div>";
+    echo "<div class=\"alert\">$modif</div>";
+}
+
 function verifyChecked($input, $policy){
     if($policy == $input) echo "checked";
 }

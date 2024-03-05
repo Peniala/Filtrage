@@ -11,6 +11,7 @@
 <body>
     <?php
         include "dataPolicy.php";
+        setAlert("vraiment");
     ?>
     <nav>
         <h1>Filter.</h1>
