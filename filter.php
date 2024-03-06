@@ -33,27 +33,27 @@
                         <label for="accept">ACCEPT</label>
                         <input type="radio" name="target" id="drop" value="drop">
                         <label for="drop">DROP</label>
-                        <input type="radio" name="target" id="reject" value="reject">
-                        <label for="reject">REJECT</label>
                     </fieldset>
-                    <fieldset class="hover-style">
+                    <fieldset class="hover-style" id="port">
                         <legend>Protocol</legend>
-                        <input type="radio" name="protocol" id="accept" value="accept">
-                        <label for="accept">ACCEPT</label>
-                        <input type="radio" name="protocol" id="drop" value="drop">
-                        <label for="drop">DROP</label>
-                        <input type="radio" name="protocol" id="reject" value="reject">
-                        <label for="reject">REJECT</label>
+                        <input type="radio" name="protocol" id="tcp" value="tcp">
+                        <label for="tcp">tcp</label>
+                        <input type="radio" name="protocol" id="udp" value="udp">
+                        <label for="udp">udp</label>
+                        <input type="radio" name="protocol" id="icmp" value="icmp">
+                        <label for="icmp">icmp</label>
+                        <input type="radio" name="protocol" id="ddp" value="ddp">
+                        <label for="ddp">ddp</label>
                     </fieldset>
                 </div>
                 <fieldset class="with-add">
                     <legend>Port</legend>
                 </fieldset>
                 <div class="target-policy">
-                    <fieldset>
-                        <input type="checkbox" name="target" id="source" value="accept">
+                    <fieldset id="type">
+                        <input type="checkbox" name="target" id="source" value="1">
                         <label for="source">Source</label>
-                        <input type="checkbox" name="target" id="dest" value="drop">
+                        <input type="checkbox" name="target" id="dest" value="1">
                         <label for="dest">Destination</label>
                     </fieldset>
                 </div>
@@ -73,5 +73,6 @@
             </form>
         </fieldset>
     </section>
+    <script></script>
 </body>
 </html>

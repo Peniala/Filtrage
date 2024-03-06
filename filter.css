@@ -2,6 +2,29 @@
     margin: 0;
     box-sizing: border-box;
 }
+.alert{
+    position: absolute;
+    background-color: #020202c2;
+    padding: 2vw;
+    width: 45%;
+    height: 15vw;
+    left: 30%;
+    top: 20vw;
+    text-align: center;
+    border: 1px solid #07791a;
+    color: var(--font);
+    font-size : 1.5vw;
+    z-index: 5;
+}
+.hide{
+    display: none;
+}
+.block{
+    display: block;
+}
+.choice{
+    bottom : 5%;
+}
 :root{
     --color-body: #161515;
     --green: #04a727;

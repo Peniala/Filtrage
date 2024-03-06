@@ -1,8 +1,16 @@
 <?php
 
-function setAlert($modif){
-    //echo "<div class =\"alert\">Voulez-vous vraiment : ".$modif."</div>";
-    echo "<div class=\"alert\">$modif</div>";
+// function getRules(){
+//     $list = 
+// }
+function setAlert($modif,$link,$hide){
+    echo "
+    <div class=\"alert $hide\">Are you sure to : $modif <br>
+        <div class = \"choice\">
+            <a href=\"".$link."choice=yes\"><button type=\"submit\">Yes : ".$link."choice=yes</button></a>
+            <a href=\"".$link."choice=no\"><button type=\"submit\">No : ".$link."choice=no</button></a>
+        </div>
+    </div>";
 }
 
 function verifyChecked($input, $policy){
