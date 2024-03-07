@@ -34,7 +34,7 @@
                         <input type="radio" name="target" id="drop" value="drop">
                         <label for="drop">DROP</label>
                     </fieldset>
-                    <fieldset class="hover-style" id="port">
+                    <fieldset class="hover-style" id="prot">
                         <legend>Protocol</legend>
                         <input type="radio" name="protocol" id="tcp" value="tcp">
                         <label for="tcp">tcp</label>

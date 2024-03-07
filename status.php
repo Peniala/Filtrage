@@ -19,6 +19,7 @@
         <a href=""><div class="link">Help</div></a>
     </nav>
     <section>
+        <a href=""><button>Reset rules</button></a>
         <fieldset class="center">
             <legend>Chain Policy : Input <?php echo $policy[0];?></legend>
             <div class="each-rule">
