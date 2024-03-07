@@ -26,9 +26,9 @@
             <form action="policy.php" method="get">
                 <fieldset class="hover-style">
                     <legend>Input</legend>
-                    <input type="radio" name="pInput" id="acceptIn" value="ACCEPT" <?php if(!empty($_GET["pInput"])) { verifyChecked($pInput,"ACCEPT");} else verifyChecked($policy[0],"ACCEPT"); ?> >
+                    <input type="radio" name="pInput" id="acceptIn" value="ACCEPT" <?php verifyChecked($pInput,"ACCEPT"); ?> >
                     <label for="acceptIn">ACCEPT</label>
-                    <input type="radio" name="pInput" id="dropIn" value="DROP" <?php if(!empty($_GET["pInput"])) { verifyChecked($pInput,"DROP");} else verifyChecked($policy[0],"DROP"); ?> >
+                    <input type="radio" name="pInput" id="dropIn" value="DROP" <?php verifyChecked($pInput,"DROP"); ?> >
                     <label for="dropIn">DROP</label>
                     <abbr title="Commit change"><input type="submit" value=">" class="sub"></abbr>
                 </fieldset>
@@ -36,9 +36,9 @@
             <form action="policy.php" method="get">
                 <fieldset class="hover-style">
                     <legend>Forward</legend>
-                    <input type="radio" name="pForward" id="acceptFor" value="ACCEPT" <?php if(!empty($_GET["pForward"])) { verifyChecked($pForward,"ACCEPT");} else verifyChecked($policy[1],"ACCEPT"); ?> >
+                    <input type="radio" name="pForward" id="acceptFor" value="ACCEPT" <?php verifyChecked($pForward,"ACCEPT"); ?> >
                     <label for="acceptFor">ACCEPT</label>
-                    <input type="radio" name="pForward" id="dropFor" value="DROP" <?php if(!empty($_GET["pForward"])) { verifyChecked($pForward,"DROP");} else verifyChecked($policy[1],"DROP"); ?> >
+                    <input type="radio" name="pForward" id="dropFor" value="DROP" <?php verifyChecked($pForward,"DROP"); ?> >
                     <label for="dropFor">DROP</label>
                     <abbr title="Commit change"><input type="submit" value=">" class="sub"></abbr>
                 </fieldset>
@@ -46,9 +46,9 @@
             <form action="policy.php" method="get">
                 <fieldset class="hover-style">
                     <legend>Output</legend>
-                    <input type="radio" name="pOutput" id="acceptOut" value="ACCEPT" <?php if(!empty($_GET["pOutput"])) { verifyChecked($pOutput,"ACCEPT");} else verifyChecked($policy[2],"ACCEPT"); ?> >
+                    <input type="radio" name="pOutput" id="acceptOut" value="ACCEPT" <?php verifyChecked($pOutput,"ACCEPT"); ?> >
                     <label for="acceptOut">ACCEPT</label>
-                    <input type="radio" name="pOutput" id="dropOut" value="DROP" <?php if(!empty($_GET["pOutput"])) { verifyChecked($pOutput,"DROP");} else verifyChecked($policy[2],"DROP"); ?> >
+                    <input type="radio" name="pOutput" id="dropOut" value="DROP" <?php verifyChecked($pOutput,"DROP"); ?> >
                     <label for="dropOut">DROP</label>
                     <abbr title="Commit change"><input type="submit" value=">" class="sub"></abbr>
                 </fieldset>

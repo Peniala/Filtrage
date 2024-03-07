@@ -1,5 +1,21 @@
+section .center{
+    margin: 0.5vw;
+    padding: 1vw;
+    font-size: 1em;
+    color: var(--font);
+}
 section fieldset legend{
     font-size: var(--text);
     color: var(--font);
     padding: 5px;
+}
+section .center .each-rule{
+    display: grid;
+    grid-template-columns: repeat(7,1fr);
+}
+section .center .each-rule .action button{
+    width: 45%;
+    height: 100%;
+    background-color: #000;
+    border: 1px solid var(--font);
 }
