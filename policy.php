@@ -58,7 +58,7 @@
                 <a href="policy.php?pInput=DROP&pForward=DROP&pOutput=DROP"><button>DROP ALL</button></a>
             </fieldset>
         </fieldset>
-        <fieldset class="center target-policy">
+        <fieldset class="center block">
             <legend class="lparts">Status Policy</legend>
             <fieldset class="hover-style">
                 <legend>Input</legend>

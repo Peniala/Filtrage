@@ -2,6 +2,13 @@
     margin: 0;
     box-sizing: border-box;
 }
+:root{
+    --color-body: #161515;
+    --green: #04a727;
+    --font:#86aa77;
+    --border: 1px solid var(--green);
+    --text: 1rem;
+}
 .alert{
     position: absolute;
     background-color: #000000c4;
@@ -36,18 +43,11 @@
 .hide{
     display: none;
 }
-.block{
+.show{
     display: block;
 }
 .choice{
     bottom : 5%;
-}
-:root{
-    --color-body: #161515;
-    --green: #04a727;
-    --font:#86aa77;
-    --border: 1px solid var(--green);
-    --text: 1rem;
 }
 body{
     background-color: var(--color-body);
@@ -95,7 +95,7 @@ section .center{
     background-color: #141313;
     border: var(--border);
 }
-section .center form .target-policy{
+section .center form .block{
     border: none;
     box-shadow: none;
     display: grid;
@@ -112,13 +112,13 @@ body section .center .lparts{
     border-left: var(--border);
     border-right: var(--border);
 }
-section .center form .target-policy{
+section .center form .block{
     padding: 0vw;
 }
 section .center .with-add{
     margin: 2vw;
 }
-section .center form > *, .target-policy > *{
+section .center form > *, .block > *{
     margin: 1vw;
     padding: 1vw;
     font-size: var(--text);
@@ -144,44 +144,8 @@ section .center form input{
     background-color: #141313;
     color: var(--font);
 }
-section .center form .under{
-    width: 15%;
-    margin: 2vw 3vw 1vw auto;
-    padding: 1.3vw;
-    border: var(--border);
-    background-color: #023502;
-    position: relative;
-    box-shadow: none;
-}
-section .center form .under .over{
-    width: 100%;
-    height: 100%;
-    padding: 0.5vw;
-    bottom: 0px;
-    right: 0px;
-    position: absolute;
-    background-color: #141313;
-    text-align: center;
-}
-section .center form .under:hover .over{
-    --white-cl: #fff;
-    bottom: 4px;
-    right: 4px;
-    border: 1px solid var(--white-cl);
-}
-section .center form .under .over input[type="submit"]{
-    font-size: var(--text);
-    font-weight: bolder;
-    letter-spacing: 2px;
-    color: var(--font);
-    border-style: none;
-}
-section .center form .under i{
-    display: none;
-}
-section .center form .under:hover i{
-    display: contents;
-    color: var(--font);
+section form input[type="submit"], section a{
+    cursor: pointer;
 }
 @media  screen and (max-width: 550px) {
     *{

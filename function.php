@@ -57,6 +57,23 @@
 // 		}
 // 	}
 // }
+function split($str,$f){
+	$array = [""];
+	$i = 0;
+	for($j=0; $j < strlen($str); $j++){
+		if($str[$j] != $f){
+			$array[$i] .= $str[$j];
+		}
+		else{
+			$i++;
+			$array[$i] = "";
+		}
+	}
+	return $array;
+}
+function resetRules(){
+	system("sudo iptables -F");
+}
 function getListProtocol(){
     $list = [[]];
 	$service = "";

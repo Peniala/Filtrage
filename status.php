@@ -19,7 +19,7 @@
         <a href=""><div class="link">Help</div></a>
     </nav>
     <section>
-        <a href=""><button>Reset rules</button></a>
+        <a href="status.php?action=reset" ><abbr title="Reset rules"><button type="button" id="reset-button">Reset</button></abbr></a>
         <fieldset class="center">
             <legend>Chain Policy : Input <?php echo $policy[0];?></legend>
             <div class="each-rule">
@@ -32,8 +32,8 @@
                     <div><?php echo $rules['input'][$j]['dest']; ?></div>
                     <div><?php echo $rules['input'][$j]['oth']; ?></div>
                     <div class="action">
-                        <a href=""><button>Mod</button></a>
-                        <a href=""><button>Del</button></a>
+                        <a href="status.php?action=mod&chain=input&rule=<?php echo $j;?>"><button type="button">Mod</button></a>
+                        <a href="status.php?action=del&chain=input&rule=<?php echo $j;?>"><button type="button">Del</button></a>
                     </div>
                 <?php }
             ?>
