@@ -1,62 +1,48 @@
 <?php
 
-// function addRules(){
-// 	$cmd = "sudo iptables ";
-// 	if($chain == "input"){
-// 		$cmd = $cmd."-A INPUT ";
-// 	}
-// 	elseif($chain == "forward"){
-// 		$cmd = $cmd."-A FORWARD ";
-// 	}
-// 	else{
-// 		$cmd = $cmd."-A OUTPUT ";
-// 	}
-// 	if($acces == "accept"){
-// 		$cmd = $cmd."-j ACCEPT ";
-// 	}
-// 	else{
-// 		$cmd = $cmd."-j DROP ";
-// 	}
-// 	if($protocol != ""){
-// 		$cmd = $cmd."-p ".$protocol;
-// 		if($protocol != "icmp" && $prot != ""){
+function save(){
+	system("sudo iptables-save > rules.txt");
+}
+function restore(){
+	system("sudo iptables-restore < rules.txt");
+}
+function addRules(){
+	$cmd = "sudo iptables ";
+	$cmd = $cmd."-A ".$chain." ";
+	if(isset($target)){
+		$cmd = $cmd."-j ".$target." ";
+	}
+	if($protocol != ""){
+		$cmd = $cmd."-p ".$protocol;
+		if($protocol != "icmp" && $prot != ""){
 
-// 		}
-// 	}
-// 	system($cmd);
-// }
-// function delRule($rules,$chain,$index){
-// 	$s = getListProtocol();
-// 	$cmd = "sudo iptables -D ".$chain;
-// 	$mcmd = "";
-
-// 	if($rules[$chain][$index]['prot'] != "all"){
-// 		$cmd = $cmd." -p ".$rules[$chain][$index]['prot'];
-// 	}
-// 	if($rules[$chain][$index]['src'] != "anywhere"){
-// 		$cmd = $cmd." -s ".$rules[$chain][$index]['src'];
-// 	}
-// 	if($rules[$chain][$index]['dest'] != "anywhere"){
-// 		$cmd = $cmd." -d ".$rules[$chain][$index]['dest'];
-// 	}
-// 	if($rules[$chain][$index]['oth'] != ""){
-// 		if(strpos($rules[$chain][$index]['oth'],"MAC")){
-// 			sscanf($rules[$chain][$index]['oth'],"%*[^MAC]MAC%[^ ] ",$mac);
-// 			$mcmd = "-m mac --mac-source ".$mac;
-// 		}
-// 		if(strpos($rules[$chain][$index]['oth'],"multiport")){
-// 			sscanf($rules[$chain][$index]['oth'],"%*[^multiport dports ]multiport dports %s ",$services);
-// 			$list = str_split($services,",");
-
-// 			for($i=0; $i < count($service); $i++){
-// 				$prt = $s[$rules[$chain][$index]['prot']][$service];
-// 			}
-// 		}
-// 		else if(strpos($rules[$chain][$index]['oth'],"dport")){
-
-// 		}
-// 	}
-// }
+		}
+	}
+	system($cmd);
+}
+function getInterface(){
+	$file = popen("ifconfig","r");
+    $interf = [];
+    if(!$file){
+        echo "Erreur de commande ifconfig";
+    }
+    while(!feof($file)){
+        $line = fgets($file);
+        $i = "";
+        sscanf($line,"%[^: ]: %*[^\n]\n",$i);
+        
+        if($i != "" && $i != "\n"){
+            $interf[] = $i;
+        }
+    }
+    fclose($file);
+	return $interf;
+}
+function delRule($chain,$index){
+	$numbline = $index - 1;
+	$cmd = "sudo iptables -D ".$chain." ".$numbline;
+	system($cmd);
+}
 function split($str,$f){
 	$array = [""];
 	$i = 0;

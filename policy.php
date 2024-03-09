@@ -17,7 +17,6 @@
         <a href="policy.php"><div class="link">Policy</div></a>
         <a href="filter.php"><div class="link">Rules</div></a>
         <a href="status.php"><div class="link">Status</div></a>
-        <a href=""><div class="link">Save</div></a>
         <a href=""><div class="link">Help</div></a>
     </nav>
     <section>

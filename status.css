@@ -1,6 +1,5 @@
-section #reset-button{
-    width: 30%;
-    margin: 1vw 35%;
+section .act-button{
+    width: 100%;
     padding: 0.4vw;
     border-radius: 5px;
     border: 1px solid var(--font);
@@ -10,7 +9,7 @@ section #reset-button{
     font-weight: bold;
     letter-spacing: 1px;
 }
-section #reset-button:hover{
+section .act-button:hover{
     box-shadow: 1px 1px 5px #d6cfcf;
 }
 section .center{
@@ -26,12 +25,23 @@ section fieldset legend{
     margin: auto;
 }
 section .center .each-rule{
+    text-align: center;
     display: grid;
     grid-template-columns: repeat(7,1fr);
+}
+section .center .each-rule .title{
+    margin: 0.2vw;
+    padding: 0.3vw;
+    border-bottom: 1px solid var(--font);
+}
+section .center .each-rule div{
+    padding: 0.5vw;
+    font-size: var(--text);
 }
 section .center .each-rule .action button{
     width: 45%;
     height: 100%;
     background-color: #000;
     border: 1px solid var(--font);
+    color: var(--font);
 }

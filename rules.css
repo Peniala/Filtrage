@@ -1,6 +1,9 @@
 section .center .with-add{
     display: none;
 }
+section .center .with-add abbr{
+    text-decoration: none;
+}
 section .center .with-add #btt-prot{
     margin: auto 0.1vw;
     width: 10%;
@@ -30,6 +33,15 @@ section .center .with-add button{
     border: 1px solid var(--font);
     padding: 0.5vw;
 }
+section .center form .target-rules{
+    grid-template-columns: repeat(3,1fr);
+}
+section .center form .target-rules > *{
+    margin-left: 0;
+}
+section .center form .target-rules #interf{
+    margin-right: 0;
+}
 section .center form #prot{
     display: flex;
 }
@@ -38,6 +50,19 @@ section .center form #prot div{
 }
 section .center form .port{
     height: 4vw;
+}
+#src:hover, #dest:hover{
+    cursor: pointer;
+}
+section .center form .type-machine{
+    display: none;
+}
+section .center form .type-machine input{
+    font-size: var(--text);
+}
+section .center form .type-machine > *{
+    padding: 0.5vw;
+    margin: 1vw;
 }
 section .center form .under{
     width: 15%;
@@ -77,4 +102,15 @@ section .center form .under i{
 section .center form .under:hover i{
     display: contents;
     color: var(--font);
+}
+::-webkit-scrollbar{
+    width: 7px;
+    height: 5px;
+    background-color: #064406;
+}
+::-webkit-scrollbar-thumb{
+    width: 5px;
+    border: 1px solid #064406;
+    border-radius: 3px;
+    background-color: #186418;
 }

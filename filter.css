@@ -101,9 +101,6 @@ section .center form .block{
     display: grid;
     grid-template-columns: repeat(2,1fr);
 }
-section .center form .target-rules{
-    grid-template-columns: repeat(3,1fr);
-}
 body section .center .lparts{
     margin: auto;
     padding: 12px;
