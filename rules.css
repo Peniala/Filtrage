@@ -11,13 +11,13 @@ section .center .with-add #btt-prot{
 section .center .with-add #btt-prot button{
     display: block;
 }
-section .center .with-add #protocols{
+section .center .with-add #ports{
     margin: 0.2vw;
     width: 90%;
     display: grid; 
     grid-template-columns : repeat(3,1fr);
 }
-section .center .with-add #protocols select{
+section .center .with-add #ports select{
     margin: 0.6vw;
     font-size: var(--text);
     scrollbar-width: 12px;

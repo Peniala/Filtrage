@@ -10,7 +10,7 @@
     }
     else if($_GET["action"] == "reset" && !empty($_GET["choice"])){
         if($_GET["choice"] == "yes"){
-            resetRules();
+            resetRules($rules);
         }
         else{
             setAlert("status.php?action=reset&","hide","");

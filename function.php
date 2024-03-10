@@ -6,19 +6,50 @@ function save(){
 function restore(){
 	system("sudo iptables-restore < rules.txt");
 }
-function addRules(){
+function addRules($chain,$target,$interf,$protocol,$src,$dest){
 	$cmd = "sudo iptables ";
-	$cmd = $cmd."-A ".$chain." ";
-	if(isset($target)){
-		$cmd = $cmd."-j ".$target." ";
-	}
-	if($protocol != ""){
-		$cmd = $cmd."-p ".$protocol;
-		if($protocol != "icmp" && $prot != ""){
+	$cmd = $cmd."-A ".$chain;
+	$cmd = $cmd." -j ".$target;
 
+	if($interf != "none"){
+		if($chain == "INPUT"){
+			$cmd = $cmd." -i ".$interf;
+		}
+		if($chain == "OUTPUT"){
+			$cmd = $cmd." -o ".$interf;
+		}
+	}
+	if($protocol[0] != "none"){
+		$cmd = $cmd." -p ".$protocol[0];
+		if($protocol[1] != "none"){
+			if(strpos($protocol[1],",")){
+				$cmd = $cmd." -m multiport --sport ".$protocol[1];
+				$cmd = $cmd." -m multiport --dport ".$protocol[1];
+			}
+			else{
+				$cmd = $cmd." --sport ".$protocol[1];
+				$cmd = $cmd." --dport ".$protocol[1];
+			}
+		}
+	}
+	if($src[0] != "none"){
+		if($src[1] == "on"){
+			$cmd = $cmd." -m mac --mac-source ".$src[1];
+		}
+		else{
+			$cmd = $cmd." -s ".$src[2];
+		}
+	}
+	if($dest[0] != "none"){
+		if($dest[1] == "on"){
+			$cmd = $cmd." -m mac --mac-source ".$dest[1];
+		}
+		else{
+			$cmd = $cmd." -d ".$dest[2];
 		}
 	}
 	system($cmd);
+	return "ici";
 }
 function getInterface(){
 	$file = popen("ifconfig","r");
@@ -57,8 +88,16 @@ function split($str,$f){
 	}
 	return $array;
 }
-function resetRules(){
-	system("sudo iptables -F");
+function resetRules($rules){
+	foreach($rules as $index => $tab){
+		for($i=3; $i < count($tab)-1; $i++){
+			if($index == 'input') $cmd = "sudo iptales -D INPUT 2";
+			else if($index == 'forward') $cmd = "sudo iptales -D FORWARD 2";
+			else if($index == 'output') $cmd = "sudo iptales -D OUTPUT 2";
+			system($cmd);
+		}
+	}
+	system("sudo iptales -D FORWARD 1");
 }
 function getListProtocol(){
     $list = [[]];
