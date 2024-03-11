@@ -1,11 +1,192 @@
 <?php
 
-function save(){
-	system("sudo iptables-save > rules.txt");
+////////////////////////////////////////////////////////////////// Fonction Log ////////////////////////////////////////////////////////////////////
+
+function verifyUser(){
+	if(isset($_POST['name']) && isset($_POST['passwd'])){
+		$_SESSION['name'] = $_POST['name'];
+		$_SESSION['passwd'] = $_POST['passwd'];
+	}
+	if(isset($_SESSION['name']) && isset($_SESSION['passwd'])){
+		if($_SESSION['name'] != "mit" || $_SESSION['passwd'] != "123456"){
+			session_destroy();
+			header("Location:login.php?1");
+		}
+	}
+	else{
+		header("Location:login.php?2");
+	}
 }
-function restore(){
-	system("sudo iptables-restore < rules.txt");
+
+////////////////////////////////////////////////////////////////// Fonction sur Rules //////////////////////////////////////////////////////////////
+
+// Fonction de verification requete ajout
+
+function verifyAdd(){
+	if(isset($_GET["action"]) && $_GET["action"] != "mod"){
+		if(isset($_GET["choice"])){
+			if($_GET["choice"] == "yes"){
+				addRules($_SESSION["chain"],$_SESSION["target"],$_SESSION["interf"],unserialize($_SESSION["protocol"]),unserialize($_SESSION["src"]),unserialize($_SESSION["dest"]));
+				resetSession();
+			}
+			setAlert("rules.php?","block",$mess);
+		}
+		else{
+			makeSessionAdd();
+			setAlert("rules.php?action=add&","block",$mess);
+		}
+	}
 }
+
+// Fonction de réinitialisation variable SESSION
+
+function resetSession(){
+	$_SESSION["chain"] = NULL;
+	$_SESSION["target"] = NULL;
+	$_SESSION["interf"] = NULL;
+	$_SESSION["protocol"] = NULL;
+	$_SESSION["src"] = NULL;
+	$_SESSION["dest"] = NULL;
+}
+
+// Fonction d'ajout de règles
+
+function addRules($chain,$target,$interf,$protocol,$src,$dest){
+	$cmd = translateRulesToCmd($chain,$target,$interf,$protocol,$src,$dest);
+	if(strpos($cmd,"--sport")){
+		system($cmd);
+		$cmd[strpos($cmd,"--sport")+2] = 'd';
+		system($cmd);
+	}
+	else if(strpos($cmd,"--dport")){
+		system($cmd);
+		$cmd[strpos($cmd,"--dport")+2] = 's';
+		system($cmd);
+	}
+	else{
+		system($cmd);
+	}
+}
+
+// Fonction d'ajout de session pour l'ajout de règles
+
+function makeSessionAdd(){
+	$mess = "Add a ";
+	if(isset($_GET["chain"])){
+		$_SESSION["chain"] = $_GET["chain"];
+		$mess .= "chain ".$_GET["chain"];
+	}
+	if(isset($_GET["target"])){
+		$_SESSION["target"] = $_GET["target"];
+		$mess .= " with ".$_GET["target"]." acces";
+	}
+	if(isset($_GET["inter"]) && !empty($_GET["inter"])){
+		$_SESSION["interf"] = $_GET["inter"];
+		$mess .= " on ".$_GET["inter"]." interface";
+	}
+	else{
+		$_SESSION["interf"] = "none";  
+	}
+	if(isset($_GET["protocol"])){
+		$prt = [];				// pour l'ensemble
+		$i = 1;
+		$port = "port".$i;		// liste de ports
+		$ports = [];
+		$p = "";
+		$prot = $_GET["protocol"];
+		$mess .= " with the ".$_GET["protocol"]." protocol";
+		$prt[0] =  $prot;
+		if(isset($_GET[$port])){
+			while(isset($_GET[$port])){
+				$ports[] = $_GET[$port];
+				$i++;
+				$port = "port".$i;
+			}
+			for($j=0; $j < count($ports)-1; $j++){
+				$p .= $ports[$j].',';
+			}
+			$p .= $ports[count($ports)-1];
+			$prt[1] = $p;
+			$mess .= ": ".$p." port";
+		}
+		else{
+			$prt[1] = "none";
+		}
+		$_SESSION["protocol"] = serialize($prt);
+	}
+	else{
+		$_SESSION["protocol"] = serialize(["none"]);
+	}
+	if(isset($_GET["src"]) && $_GET["src"] == "on"){    
+		$s = [];
+		$s[0] = $_GET["src"];
+		if(isset($_GET["sMac"])){
+			$s[1] = "on";
+		}
+		else{
+			$s[1] = "off";
+		}
+		$s[2] = $_GET["smachine"];
+		$mess .= " from ".$_GET["smachine"];
+		$_SESSION["src"] = serialize($s);
+	}
+	else{
+		$_SESSION["src"] = serialize(["none"]);
+	}
+	if(isset($_GET["dest"]) && $_GET["dest"] == "on"){
+		$d = [];
+		$d[0] = $_GET["dest"];
+		if(isset($_GET["dMac"])){
+			$d[1] = "on";
+		}
+		else{
+			$d[1] = "off";
+		}
+		$d[2] = $_GET["dmachine"];
+		$mess .= " to ".$_GET["dmachine"];
+		$_SESSION["dest"] = serialize($d);
+	}
+	else{
+		$_SESSION["dest"] = serialize(["none"]);
+	}
+}
+
+///////////////////////////////////////////////////////////////////// Fonction dans Status ///////////////////////////////////////////////////////////
+
+//// Fonction d'affichage
+
+function displayRules($chain){
+	$rules = getRulesByChain();
+	if($chain == 'input' || $chain == 'output') $j = 6;
+	else $j = 2;
+
+	echo "
+		<div class=\"title\">Target</div>
+		<div class=\"title\">Protocol</div>
+		<div class=\"title\">Options</div>
+		<div class=\"title\">Source</div>
+		<div class=\"title\">Destination</div>
+		<div class=\"title\">Other</div>
+		<div class=\"title\">Action</div>
+		";
+
+	for(; $j < count($rules[$chain])-1; $j++){
+		echo "
+			<div>$rules[$chain][$j]['acces'];</div>
+			<div>$rules[$chain][$j]['prot']</div>
+			<div>$rules[$chain][$j]['opt']</div>
+			<div>$rules[$chain][$j]['src']</div>
+			<div>$rules[$chain][$j]['dest']</div>
+			<div>$rules[$chain][$j]['oth']</div>
+			<div class=\"action\">
+				<a href=\"rules.php?action=mod&chain=$chain&rule=$j\"><button type=\"button\">Mod</button></a>
+				<a href=\"status.php?action=del&chain=$chain&rule=$j\"><button type=\"button\">Del</button></a>
+			</div>
+			";
+	}
+}
+
+// Fonction de modification de règles 
 
 function replace($chain,$target,$interf,$protocol,$src,$dest){
 	$cmd = translateRulesToCmd($chain,$target,$interf,$protocol,$src,$dest);
@@ -16,133 +197,74 @@ function replace($chain,$target,$interf,$protocol,$src,$dest){
 	}
 	$cmd = "sudo iptables -D ".$chain." ".$nbrule." ".$newRules;
 }
-// function modifyRules($modchain,$nrule,$chain,$target,$interf,$protocol,$src,$dest){
-// 	$rules = getRulesByChain();
-// 	foreach($rules as $index => $tab){
-// 		if($index == 'input' || $index == 'output') $i = 6;
-// 		else $i = 2;
-// 		for(; $i < count($rules[$index]); $i++){
-// 			if($index == $modchain && $i == $nrule){
 
-// 			}
-// 			else{
-// 				translateRulesToCmd($rules[$index][$i],$index);
-// 			}
-// 		}
-// 	}
-// }
-// function translateRulesToCmd($rule,$chain){
-// 	$cmd = "sudo iptables";
-// 	if($chain == 'input') $chain = "INPUT";
-// 	else if($chain == 'forward') $chain = "FORWARD";
-// 	else $chain = "OUTPUT";
-// 	$cmd .= "-A ".$chain;
-// 	$cmd .= " -j ".$rules['acces'];
-// 	if($rules['prot'] != "all"){
-// 		$cmd .= " -p ".$rules['prot'];
-// 	}
-// 	if($rules['src'] != "anywhere"){
-// 		$cmd .= " -s ".$rules['src'];
-// 	}
-// 	if($rules['dest'] != "anywhere"){
-// 		$cmd .= " -d ".$rules['dest'];
-// 	}
-// 	if($rules['oth'] != ""){
+// Fonction de verification requete pour enregistrement
 
-// 	}
-// }
-function translateRulesToCmd($chain,$target,$interf,$protocol,$src,$dest){
-	$cmd = "sudo iptables ";
-	$cmd = $cmd."-A ".$chain;
-	$cmd = $cmd." -j ".$target;
-	$cmd1 = "";
+function verifySave(){
+	if($_GET["action"] == "save" && empty($_GET["choice"])){
+		setAlert("status.php?action=save&","show","Save rules");
+	}
+	else if($_GET["action"] == "save" && !empty($_GET["choice"])){
+		if($_GET["choice"] == "yes"){
+			save();
+		}
+		setAlert("status.php?action=save&","hide","");
+	
+	}
+}
 
-	if($interf != "none"){
-		if($chain == "INPUT"){
-			$cmd = $cmd." -i ".$interf;
-		}
-		if($chain == "OUTPUT"){
-			$cmd = $cmd." -o ".$interf;
-		}
+// Fonction pour enregistrer les règles établies
+
+function save(){
+	system("sudo iptables-save > rules.txt");
+}
+
+// Fonction de verification requete pour la restoration de règles
+
+function verifyRestore(){
+	if($_GET["action"] == "restore" && empty($_GET["choice"])){
+		setAlert("status.php?action=restore&","show","Restore last rules saved");
 	}
-	if($protocol[0] != "none"){
-		$cmd = $cmd." -p ".$protocol[0];
-		if($protocol[1] != "none"){
-			if(strpos($protocol[1],",")){
-				$cmd1 = $cmd." -m multiport --dport ".$protocol[1];
-				$cmd = $cmd." -m multiport --sport ".$protocol[1];
-			}
-			else if($protocol[1] != ""){
-				$cmd1 = $cmd." --dport ".$protocol[1];
-				$cmd = $cmd." --sport ".$protocol[1];
-			}
+	else if($_GET["action"] == "restore" && !empty($_GET["choice"])){
+		if($_GET["choice"] == "yes"){
+			restore();
 		}
+		setAlert("status.php?action=restore&","hide","");
 	}
-	if($src[0] == "on"){
-		if(!empty($src[2])){
-			if($src[1] == "on"){
-				$cmd = $cmd." -m mac --mac-source ".$src[2];
-				if($protocol[1] != "none"){
-					$cmd1 = $cmd1." -m mac --mac-source ".$src[2];
-				}
-			}
-			else{
-				$cmd = $cmd." -s ".$src[2];
-				if($protocol[1] != "none"){
-					$cmd1 = $cmd1." -s ".$src[2];
-				}
-			}
-		}
+}
+
+// Fonction pour restorer les règles enregistrés précedement
+
+function restore(){
+	system("sudo iptables-restore < rules.txt");
+}
+
+// Fonction pour verifier les requetes sur la suppression
+
+function verifyDelete(){
+    $rules = getRulesByChain();
+
+	if($_GET["action"] == "del" && empty($_GET["choice"])){
+		$mess = "Delete this rules : "."<br>".$rules[$_GET['chain']][$_GET['rule']]['acces']." ".$rules[$_GET['chain']][$_GET['rule']]['prot']." ".$rules[$_GET['chain']][$_GET['rule']]['opt']." ".$rules[$_GET['chain']][$_GET['rule']]['src']." ".$rules[$_GET['chain']][$_GET['rule']]['dest']." ".$rules[$_GET['chain']][$_GET['rule']]['oth'];
+		$_SESSION['chain'] = $_GET['chain'];
+		$_SESSION['index'] = $_GET['rule'];
+
+		setAlert("status.php?action=del&","show",$mess);
 	}
-	if($dest[0] == "on"){
-		if($dest[1] == "on"){
-			$cmd = $cmd." -m mac --mac-source ".$dest[2];
-			if($protocol[1] != "none"){
-				$cmd1 = $cmd1." -m mac --mac-source ".$dest[2];
-			}
+	else if($_GET["action"] == "del" && !empty($_GET["choice"])){
+		if($_GET["choice"] == "yes"){
+			delRule($_SESSION['chain'],$_SESSION['index']);
+			$_SESSION['chain'] = NULL;
+			$_SESSION['index'] = NULL;
 		}
 		else{
-			$cmd = $cmd." -s ".$dest[2];
-			if($protocol[1] != "none"){
-				$cmd1 = $cmd1." -s ".$dest[2];
-			}
+			setAlert("status.php?action=reset&","hide","");
 		}
 	}
-	if($protocol[1] != "none"){
-		if($chain == "INPUT"){
-			return $cmd." ; ".$cmd1;
-		}
-		else{
-			return $cmd1." ; ".$cmd;
-		}
-	}
-	else{
-		system($cmd);
-		return $cmd;
-	}
 }
-function addRules($chain,$target,$interf,$protocol,$src,$dest){
-	$cmd = translateRulesToCmd($chain,$target,$interf,$protocol,$src,$dest);
-	sydtem($cmd);
-}
-function getInterface(){
-	$file = popen("ifconfig","r");
-    $interf = [];
-    if(!$file){
-        echo "Erreur de commande ifconfig";
-    }
-    while(!feof($file)){
-        $line = fgets($file);
-        $i = "";
-        sscanf($line,"%[^: ]: %*[^\n]\n",$i);
-        
-        if($i != "" && $i != "\n"){
-            $interf[] = $i;
-        }
-    }
-    fclose($file);
-	return $interf;
-}
+
+// Fonction de suppression de règles
+
 function delRule($chain,$index){
 	$numbline = $index - 1;
 
@@ -153,20 +275,27 @@ function delRule($chain,$index){
 	$cmd = "sudo iptables -D ".$chain." ".$numbline;
 	system($cmd);
 }
-function split($str,$f){
-	$array = [""];
-	$i = 0;
-	for($j=0; $j < strlen($str); $j++){
-		if($str[$j] != $f){
-			$array[$i] .= $str[$j];
+
+// Fonction verification requete sur reinitialisation
+
+function verifyReset(){
+    $rules = getRulesByChain();
+
+	if($_GET["action"] == "reset" && empty($_GET["choice"])){
+		setAlert("status.php?action=reset&","show","Reset all rules");
+	}
+	else if($_GET["action"] == "reset" && !empty($_GET["choice"])){
+		if($_GET["choice"] == "yes"){
+			resetRules($rules);
 		}
 		else{
-			$i++;
-			$array[$i] = "";
+			setAlert("status.php?action=reset&","hide","");
 		}
 	}
-	return $array;
 }
+
+// Fonction d'initialisation des règles 
+
 function resetRules($rules){
 	foreach($rules as $index => $tab){
 		if($index == 'input'){
@@ -186,6 +315,52 @@ function resetRules($rules){
 		}
 	}
 }
+///////////////////////////////////////////////////////////////////// Fonction sur la page Rules /////////////////////////////////////////////////////
+
+// Fonction pour lire les lines des règles déja ajoutés
+function getRules(){
+    $file = popen("sudo iptables -L","r");
+	
+	if(!$file){
+		echo 'Erreur ouverture';
+	}
+	$i = 1;
+	$index = "";
+
+	while(!feof($file)){
+		$line = fgets($file);
+		if(strpos($line,"INPUT")){
+			$index = "input";
+		}
+		else if(strpos($line,"FORWARD")){
+			$index = "forward";
+		}
+		else if(strpos($line,"OUTPUT")){
+			$index = "output";
+		}
+		$rules[$index][] = $line;
+	}
+    fclose($file);
+
+    return $rules;
+}
+
+/// Fonction pour classer les éléments de chaque ligne de règlements
+function getRulesByChain(){
+	$line = getRules();
+	foreach($line as $index => $tab){
+		$k = 0;
+		foreach($tab as $value){
+			if($value == "\t") continue;
+			sscanf($value,"%s %s %s %s %s %[^\n]",$rules[$index][$k]['acces'],$rules[$index][$k]['prot'],$rules[$index][$k]['opt'],$rules[$index][$k]['src'],$rules[$index][$k]['dest'],$rules[$index][$k]['oth']);
+			$k++;
+		}
+	}
+	return $rules;
+}
+
+/// Fonction pour prendre les différents protocols et les ports associés
+
 function getListProtocol(){
     $list = [[]];
 	$service = "";
@@ -216,59 +391,97 @@ function getListProtocol(){
 	fclose($file);
     return $list;
 }
-function getRulesByChain(){
-	$line = getRules();
-	foreach($line as $index => $tab){
-		$k = 0;
-		foreach($tab as $value){
-			if($value == "\t") continue;
-			sscanf($value,"%s %s %s %s %s %[^\n]",$rules[$index][$k]['acces'],$rules[$index][$k]['prot'],$rules[$index][$k]['opt'],$rules[$index][$k]['src'],$rules[$index][$k]['dest'],$rules[$index][$k]['oth']);
-			$k++;
-		}
-	}
-	return $rules;
-}
-function getRules(){
-    $file = popen("sudo iptables -L","r");
-	
-	if(!$file){
-		echo 'Erreur ouverture';
-	}
-	$i = 1;
-	$index = "";
 
-	while(!feof($file)){
-		$line = fgets($file);
-		if(strpos($line,"INPUT")){
-			$index = "input";
-		}
-		else if(strpos($line,"FORWARD")){
-			$index = "forward";
-		}
-		else if(strpos($line,"OUTPUT")){
-			$index = "output";
-		}
-		$rules[$index][] = $line;
-	}
+// Fonction pour récuperer la liste des intefaces réseaux
+
+function getInterface(){
+	$file = popen("ifconfig","r");
+    $interf = [];
+    if(!$file){
+        echo "Erreur de commande ifconfig";
+    }
+    while(!feof($file)){
+        $line = fgets($file);
+        $i = "";
+        sscanf($line,"%[^: ]: %*[^\n]\n",$i);
+        
+        if($i != "" && $i != "\n"){
+            $interf[] = $i;
+        }
+    }
     fclose($file);
-
-    return $rules;
-}
-function setAlert($link,$hide,$modif){
-    echo "
-    <div class=\"alert $hide\">
-        <div>Are you sure to :
-            <div>$modif</div>
-            <div class = \"choice\">
-                <a href=\"".$link."choice=yes\"><button type=\"submit\">Yes</button></a>
-                <a href=\"".$link."choice=no\"><button type=\"submit\">No</button></a>
-            </div>
-        </div>
-    </div>";
+	return $interf;
 }
 
-function verifyChecked($input, $policy){
-    if($policy == $input) echo "checked";
+////////////////////////////////////////////////////////////////////// Fonction policy /////////////////////////////////////////////////////////////////
+
+// Fonction de verification requete sur les policies
+
+function verifyPolicy(){
+
+	$url = "policy.php?";
+	$modif = "";
+
+	$policy = getPolicy();
+	$pInput = $policy[0];
+	$pForward = $policy[1];
+	$pOutput = $policy[2];
+
+	if(!isset($_GET["choice"]) && (isset($_GET["pInput"]) || isset($_GET["pForward"]) || isset($_GET["pOutput"]))){
+		$i = 0;
+		$change = 0;
+
+		if(isset($_GET["pInput"])){
+			if($pInput != $_GET["pInput"]){
+				$modif = "<div>Change INPUT policy ".$pInput." into ".$_GET["pInput"]."</div>";
+				$change = 1;
+			}
+			$url = $url."pInput=".$_GET["pInput"];
+			$i++;
+		}
+		if(isset($_GET["pForward"])){
+			if($pForward != $_GET["pForward"]){ 
+				$modif = $modif."<div>Change FORWARD policy ".$pForward." into ".$_GET["pForward"]."</div>";
+				$change = 1;
+			}
+			if($i == 0){ 
+				$url = $url."pForward=".$_GET["pForward"]; 
+				$i++;
+			}
+			else $url = $url."&pForward=".$_GET["pForward"];
+		}
+		if(isset($_GET["pOutput"])){
+			if($pOutput != $_GET["pOutput"]){ 
+				$modif = $modif."<div>Change OUTPUT policy ".$pOutput." into ".$_GET["pOutput"]."</div>";
+				$change = 1;
+			}
+			if($i == 0){ 
+				$url = $url."pOutput=".$_GET["pOutput"]; 
+				$i++;
+			}
+			else $url = $url."&pOutput=".$_GET["pOutput"];
+		}
+		$url = $url."&";
+		if($change == 1) setAlert($url,"block",$modif);
+	}
+	else if(isset($_GET["choice"]) && $_GET["choice"] == "yes"){
+		if(isset($_GET["pInput"])){
+			$pInput = $_GET["pInput"];
+			system($cmd."INPUT ".$pInput);
+		}
+		if(isset($_GET["pForward"])){
+			$pForward = $_GET["pForward"];
+			system($cmd."FORWARD ".$pForward);
+		}
+		if(isset($_GET["pOutput"])){
+			$pOutput = $_GET["pOutput"];
+			system($cmd."OUTPUT ".$pOutput);
+		}
+		setAlert($url,"hide","Yes");
+	}
+	else{
+		setAlert($url,"hide","No");
+	}
 }
 
 function getPolicy(){
@@ -293,4 +506,98 @@ function getPolicy(){
     return $policy;    
 }
 
+function verifyChecked($input, $policy){
+    if($policy == $input) echo "checked";
+}
+
+///////////////////////////////////////////////////////////// Fonction utilisée dans toutes les pages /////////////////////////////////////////////
+
+function split($str,$f){
+	$array = [""];
+	$i = 0;
+	for($j=0; $j < strlen($str); $j++){
+		if($str[$j] != $f){
+			$array[$i] .= $str[$j];
+		}
+		else{
+			$i++;
+			$array[$i] = "";
+		}
+	}
+	return $array;
+}
+
+// Alerte aux changements 
+
+function setAlert($link,$hide,$modif){
+    echo "
+    <div class=\"alert $hide\">
+        <div>Are you sure to :
+            <div>$modif</div>
+            <div class = \"choice\">
+                <a href=\"".$link."choice=yes\"><button type=\"submit\">Yes</button></a>
+                <a href=\"".$link."choice=no\"><button type=\"submit\">No</button></a>
+            </div>
+        </div>
+    </div>";
+}
+
+/// Traduire en commande une requete
+
+function translateRulesToCmd($chain,$target,$interf,$protocol,$src,$dest){
+	$cmd = "sudo iptables ";
+	$cmd = $cmd."-A ".$chain;
+	$cmd = $cmd." -j ".$target;
+
+	if($interf != "none"){
+		if($chain == "INPUT"){
+			$cmd = $cmd." -i ".$interf;
+		}
+		if($chain == "OUTPUT"){
+			$cmd = $cmd." -o ".$interf;
+		}
+	}
+	if($protocol[0] != "none"){
+		$cmd = $cmd." -p ".$protocol[0];
+		if($protocol[1] != "none"){
+			if(strpos($protocol[1],",")){
+				if($chain == "INPUT"){					
+					$cmd = $cmd." -m multiport --sport ".$protocol[1];
+				}
+				else{
+					$cmd = $cmd." -m multiport --dport ".$protocol[1];
+				}
+			}
+			else if($protocol[1] != ""){
+				if($chain == "INPUT"){					
+					$cmd = $cmd." --sport ".$protocol[1];
+				}
+				else{
+					$cmd = $cmd." --dport ".$protocol[1];
+				}
+			}
+		}
+	}
+	if($src[0] == "on"){
+		if(!empty($src[2])){
+			if($src[1] == "on"){
+				$cmd = $cmd." -m mac --mac-source ".$src[2];
+			}
+			else{
+				$cmd = $cmd." -s ".$src[2];
+			}
+		}
+	}
+	if($dest[0] == "on"){
+		if(!empty($src[2])){
+			if($dest[1] == "on"){
+				$cmd = $cmd." -m mac --mac-source ".$dest[2];
+			}
+			else{
+				$cmd = $cmd." -d ".$dest[2];
+			}
+		}
+	}
+	return $cmd;
+}
 ?>

@@ -1,3 +1,9 @@
+<?php        
+    session_start();
+
+    include "dataPolicy.php";
+    
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,15 +15,13 @@
     <title>Filter</title>
 </head>
 <body>
-    <?php
-        include "dataPolicy.php";
-    ?>
     <nav>
         <h1>Filter.</h1>
         <a href="policy.php"><div class="link">Policy</div></a>
         <a href="rules.php"><div class="link">Rules</div></a>
         <a href="status.php"><div class="link">Status</div></a>
         <a href=""><div class="link">Help</div></a>
+        <a href=""><div class="link">Log out</div></a>
     </nav>
     <section>
         <fieldset class="center">

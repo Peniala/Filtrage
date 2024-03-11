@@ -1,0 +1,13 @@
+section h1{
+    color: var(--font);
+}
+section form{
+    font-size: 1em;
+    text-align: center;
+    margin: auto;
+    border: 1px solid var(--border);
+}
+section form > input{
+    width: 30%;
+    display: block;
+}
