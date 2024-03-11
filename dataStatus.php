@@ -2,8 +2,8 @@
 
     include "function.php";
 
-    verifyUser();
-    
+    verifyUserConnection();
+
     $policy = getPolicy();
 
     verifyDelete();

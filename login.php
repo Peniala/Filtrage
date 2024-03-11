@@ -11,9 +11,9 @@
     <title>Filtrage</title>
 </head>
 <body>
-    <section class="center">
+    <section>
         <h1>Log in</h1>
-        <form action="status.php" method="post" class="block">
+        <form action="status.php" method="post">
             <input type="text" name="name" placeholder="Name">
             <input type="password" name="passwd" placeholder="Password">
             <input type="submit" value="Log in">

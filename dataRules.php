@@ -2,8 +2,8 @@
 
     include "function.php";
 
-    verifyUser();
-    
+    verifyUserConnection();
+
     $protls = getListProtocol();
 
     verifyAdd();

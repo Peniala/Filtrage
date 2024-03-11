@@ -2,7 +2,7 @@
     session_start();
 
     include "dataPolicy.php";
-    
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,7 +21,7 @@
         <a href="rules.php"><div class="link">Rules</div></a>
         <a href="status.php"><div class="link">Status</div></a>
         <a href=""><div class="link">Help</div></a>
-        <a href=""><div class="link">Log out</div></a>
+        <a href="policy.php?logout=yes"><div class="link">Log out</div></a>
     </nav>
     <section>
         <fieldset class="center">

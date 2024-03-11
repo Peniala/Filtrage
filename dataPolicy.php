@@ -2,11 +2,9 @@
 
     include "function.php";
 
-    verifyUser();
-    
-    verifyPolicy();
+    verifyUserConnection();
 
-    $policy = getPolicy();
+    $policy = verifyPolicy();
 
     $pInput = $policy[0];
     $pForward = $policy[1];

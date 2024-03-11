@@ -20,7 +20,7 @@
         <a href="rules.php"><div class="link">Rules</div></a>
         <a href="status.php"><div class="link">Status</div></a>
         <a href=""><div class="link">Help</div></a>
-        <a href=""><div class="link">Log out</div></a>
+        <a href="rules.php?logout=yes"><div class="link">Log out</div></a>
     </nav>
     <section>
         <fieldset class="center">

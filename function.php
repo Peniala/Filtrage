@@ -2,7 +2,15 @@
 
 ////////////////////////////////////////////////////////////////// Fonction Log ////////////////////////////////////////////////////////////////////
 
-function verifyUser(){
+function logout(){
+	session_destroy();
+	header("Location:login.php");
+}
+
+function verifyUserConnection(){
+	if(isset($_GET['logout'])){
+		logout();
+	}
 	if(isset($_POST['name']) && isset($_POST['passwd'])){
 		$_SESSION['name'] = $_POST['name'];
 		$_SESSION['passwd'] = $_POST['passwd'];
@@ -10,11 +18,11 @@ function verifyUser(){
 	if(isset($_SESSION['name']) && isset($_SESSION['passwd'])){
 		if($_SESSION['name'] != "mit" || $_SESSION['passwd'] != "123456"){
 			session_destroy();
-			header("Location:login.php?1");
+			header("Location:login.php");
 		}
 	}
 	else{
-		header("Location:login.php?2");
+		header("Location:login.php");
 	}
 }
 
@@ -29,7 +37,7 @@ function verifyAdd(){
 				addRules($_SESSION["chain"],$_SESSION["target"],$_SESSION["interf"],unserialize($_SESSION["protocol"]),unserialize($_SESSION["src"]),unserialize($_SESSION["dest"]));
 				resetSession();
 			}
-			setAlert("rules.php?","block",$mess);
+			setAlert("rules.php?","hide","");
 		}
 		else{
 			makeSessionAdd();
@@ -482,6 +490,7 @@ function verifyPolicy(){
 	else{
 		setAlert($url,"hide","No");
 	}
+	return [$pInput,$pForward,$pOutput];
 }
 
 function getPolicy(){

@@ -1,13 +1,30 @@
+section{
+    padding: 2vw;
+    border-style: solid;
+    border: 1px solid var(--font);
+    margin: 5vw auto;
+    width: 50%;
+    text-align: center;
+}
 section h1{
     color: var(--font);
+    font-size: 2.5em;
 }
 section form{
-    font-size: 1em;
-    text-align: center;
-    margin: auto;
-    border: 1px solid var(--border);
+    font-size: 0.8em;
+    letter-spacing: 1px;
+    align-items: center;
 }
-section form > input{
-    width: 30%;
-    display: block;
+section form input{
+    width: 70%;
+    height: 3vw;
+    display: flex;
+    flex-direction: row;
+    margin: 1vw auto;
+    padding: 0.4vw;
+}
+section form input[type="submit"]{
+    background-color: var(--font);
+    color: #435f3e;
+    border-color: var(--font);
 }
