@@ -24,8 +24,23 @@
     <section>
         <fieldset class="center">
             <legend class="lparts">Add rules</legend>
-            <form action="rules.php" method="get">
-                <?php if(!isset($_GET["action"])) echo "<input type=\"text\" name=\"action\" value=\"add\" hidden>";?>
+            <form action="<?php 
+                                if(isset($_GET["action"]) && $_GET["action"] == "mod"){
+                                    echo "status.php"; 
+                                }
+                                else echo "rules.php";
+                            ?>" 
+                method="get">
+                <?php 
+                    if(isset($_GET["action"]) && $_GET["action"] == "mod") {
+                        echo "<input type=\"text\" name=\"action\" value=\"".$_GET["action"]."\" hidden>";
+                        echo "<input type=\"text\" name=\"modchain\" value=\"".$_GET["chain"]."\" hidden>";
+                        echo "<input type=\"text\" name=\"rule\" value=\"".$_GET["rule"]."\" hidden>";
+                    }
+                    else{
+                        echo "<input type=\"text\" name=\"action\" value=\"add\" hidden>";
+                    }    
+                ?>
                 <div class="block target-rules">
                     <select name="chain" class="hover-style">
                         <option value="" disabled>Chain</option>
@@ -42,6 +57,7 @@
                     </fieldset>
                     <select name="inter" id="interf" class="hover-style">
                         <option value="" disabled>Interface available</option>
+                        <option value="" ></option>
                         <?php
                             foreach(getInterface() as $inter){
                         ?>
@@ -88,7 +104,7 @@
                     <div class="type-machine source">
                         <input type="text" name="smachine" placeholder="Enter value">
                         <div>
-                            <input type="radio" name="smach" id="sMac" >
+                            <input type="radio" name="sMac" id="sMac" >
                             <label for="sMac">MAC</label>
                         </div>
                     </div>
@@ -101,7 +117,7 @@
                     <div class="type-machine destination">
                         <input type="text" name="dmachine" placeholder="Enter value">
                         <div>
-                            <input type="radio" name="dmach" id="dMac" >
+                            <input type="radio" name="dMac" id="dMac" >
                             <label for="dMac">MAC</label>
                         </div>
                     </div>

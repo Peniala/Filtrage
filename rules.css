@@ -6,19 +6,20 @@ section .center .with-add abbr{
 }
 section .center .with-add #btt-prot{
     margin: auto 0.1vw;
-    width: 10%;
+    width: 5%;
 }
 section .center .with-add #btt-prot button{
     display: block;
 }
 section .center .with-add #ports{
     margin: 0.2vw;
-    width: 90%;
+    width: 95%;
     display: grid; 
     grid-template-columns : repeat(3,1fr);
 }
 section .center .with-add #ports select{
     margin: 0.6vw;
+    width: auto;
     font-size: var(--text);
     scrollbar-width: 12px;
 }

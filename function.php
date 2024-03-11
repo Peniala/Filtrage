@@ -6,10 +6,56 @@ function save(){
 function restore(){
 	system("sudo iptables-restore < rules.txt");
 }
-function addRules($chain,$target,$interf,$protocol,$src,$dest){
+
+function replace($chain,$target,$interf,$protocol,$src,$dest){
+	$cmd = translateRulesToCmd($chain,$target,$interf,$protocol,$src,$dest);
+	$newRules = "";
+	$j = strlen($chain);
+	for($i = strpos($cmd,$chain) + $j; $i < strlen($cmd); $i++){
+		$newRules = $newRules.$cmd[$i];
+	}
+	$cmd = "sudo iptables -D ".$chain." ".$nbrule." ".$newRules;
+}
+// function modifyRules($modchain,$nrule,$chain,$target,$interf,$protocol,$src,$dest){
+// 	$rules = getRulesByChain();
+// 	foreach($rules as $index => $tab){
+// 		if($index == 'input' || $index == 'output') $i = 6;
+// 		else $i = 2;
+// 		for(; $i < count($rules[$index]); $i++){
+// 			if($index == $modchain && $i == $nrule){
+
+// 			}
+// 			else{
+// 				translateRulesToCmd($rules[$index][$i],$index);
+// 			}
+// 		}
+// 	}
+// }
+// function translateRulesToCmd($rule,$chain){
+// 	$cmd = "sudo iptables";
+// 	if($chain == 'input') $chain = "INPUT";
+// 	else if($chain == 'forward') $chain = "FORWARD";
+// 	else $chain = "OUTPUT";
+// 	$cmd .= "-A ".$chain;
+// 	$cmd .= " -j ".$rules['acces'];
+// 	if($rules['prot'] != "all"){
+// 		$cmd .= " -p ".$rules['prot'];
+// 	}
+// 	if($rules['src'] != "anywhere"){
+// 		$cmd .= " -s ".$rules['src'];
+// 	}
+// 	if($rules['dest'] != "anywhere"){
+// 		$cmd .= " -d ".$rules['dest'];
+// 	}
+// 	if($rules['oth'] != ""){
+
+// 	}
+// }
+function translateRulesToCmd($chain,$target,$interf,$protocol,$src,$dest){
 	$cmd = "sudo iptables ";
 	$cmd = $cmd."-A ".$chain;
 	$cmd = $cmd." -j ".$target;
+	$cmd1 = "";
 
 	if($interf != "none"){
 		if($chain == "INPUT"){
@@ -23,33 +69,61 @@ function addRules($chain,$target,$interf,$protocol,$src,$dest){
 		$cmd = $cmd." -p ".$protocol[0];
 		if($protocol[1] != "none"){
 			if(strpos($protocol[1],",")){
+				$cmd1 = $cmd." -m multiport --dport ".$protocol[1];
 				$cmd = $cmd." -m multiport --sport ".$protocol[1];
-				$cmd = $cmd." -m multiport --dport ".$protocol[1];
+			}
+			else if($protocol[1] != ""){
+				$cmd1 = $cmd." --dport ".$protocol[1];
+				$cmd = $cmd." --sport ".$protocol[1];
+			}
+		}
+	}
+	if($src[0] == "on"){
+		if(!empty($src[2])){
+			if($src[1] == "on"){
+				$cmd = $cmd." -m mac --mac-source ".$src[2];
+				if($protocol[1] != "none"){
+					$cmd1 = $cmd1." -m mac --mac-source ".$src[2];
+				}
 			}
 			else{
-				$cmd = $cmd." --sport ".$protocol[1];
-				$cmd = $cmd." --dport ".$protocol[1];
+				$cmd = $cmd." -s ".$src[2];
+				if($protocol[1] != "none"){
+					$cmd1 = $cmd1." -s ".$src[2];
+				}
 			}
 		}
 	}
-	if($src[0] != "none"){
-		if($src[1] == "on"){
-			$cmd = $cmd." -m mac --mac-source ".$src[1];
-		}
-		else{
-			$cmd = $cmd." -s ".$src[2];
-		}
-	}
-	if($dest[0] != "none"){
+	if($dest[0] == "on"){
 		if($dest[1] == "on"){
-			$cmd = $cmd." -m mac --mac-source ".$dest[1];
+			$cmd = $cmd." -m mac --mac-source ".$dest[2];
+			if($protocol[1] != "none"){
+				$cmd1 = $cmd1." -m mac --mac-source ".$dest[2];
+			}
 		}
 		else{
-			$cmd = $cmd." -d ".$dest[2];
+			$cmd = $cmd." -s ".$dest[2];
+			if($protocol[1] != "none"){
+				$cmd1 = $cmd1." -s ".$dest[2];
+			}
 		}
 	}
-	system($cmd);
-	return "ici";
+	if($protocol[1] != "none"){
+		if($chain == "INPUT"){
+			return $cmd." ; ".$cmd1;
+		}
+		else{
+			return $cmd1." ; ".$cmd;
+		}
+	}
+	else{
+		system($cmd);
+		return $cmd;
+	}
+}
+function addRules($chain,$target,$interf,$protocol,$src,$dest){
+	$cmd = translateRulesToCmd($chain,$target,$interf,$protocol,$src,$dest);
+	sydtem($cmd);
 }
 function getInterface(){
 	$file = popen("ifconfig","r");
@@ -71,6 +145,11 @@ function getInterface(){
 }
 function delRule($chain,$index){
 	$numbline = $index - 1;
+
+	if($chain == "input") $chain = "INPUT";
+	if($chain == "forward") $chain = "FORWARD";
+	if($chain == "output") $chain = "OUTPUT";
+
 	$cmd = "sudo iptables -D ".$chain." ".$numbline;
 	system($cmd);
 }
@@ -90,14 +169,22 @@ function split($str,$f){
 }
 function resetRules($rules){
 	foreach($rules as $index => $tab){
-		for($i=3; $i < count($tab)-1; $i++){
-			if($index == 'input') $cmd = "sudo iptales -D INPUT 2";
-			else if($index == 'forward') $cmd = "sudo iptales -D FORWARD 2";
-			else if($index == 'output') $cmd = "sudo iptales -D OUTPUT 2";
-			system($cmd);
+		if($index == 'input'){
+			for($i=6; $i < count($tab)- 4; $i++){
+				system("sudo iptables -D INPUT 5");
+			}
+		}
+		if($index == 'output'){
+			for($i=6; $i < count($tab)- 4; $i++){
+				system("sudo iptables -D OUTPUT 5");
+			}
+		}
+		if($index == 'forward'){
+			for($i=2; $i < count($tab); $i++){
+				system("sudo iptables -D FORWARD 1");
+			}
 		}
 	}
-	system("sudo iptales -D FORWARD 1");
 }
 function getListProtocol(){
     $list = [[]];
