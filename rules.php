@@ -24,7 +24,7 @@
     </nav>
     <section>
         <fieldset class="center">
-            <legend class="lparts">Add rules</legend>
+            <legend class="lparts"><?php echo $title;?> rules</legend>
             <form action="<?php 
                                 if(isset($_GET["action"]) && $_GET["action"] == "mod"){
                                     echo "status.php"; 
@@ -168,22 +168,84 @@
         let prot = "";
 
         blc_tcp.addEventListener("click",function(){
-            document.querySelector("#tcp").checked = true;
-            port.style.display = 'flex';
-            prot = "tcp";
+            if(port.style.display == 'flex'){
+                document.querySelector("#tcp").checked = false;
+                port.style.display = 'none';
+                port.innerHTML = `
+                        <legend>Port</legend>
+                        <div id="btt-prot">
+                            <abbr title="Add port"><button id="add" type="button">+</button></abbr>
+                            <abbr title="Reduce port"><button id="remove" type="button">-</button></abbr>
+                        </div>
+                        <div id="ports">    
+                        </div>
+                `;
+                prot = "";
+            }
+            else{
+                document.querySelector("#tcp").checked = true;
+                port.style.display = 'flex';
+                prot = "tcp";
+            }
         });
         blc_udp.addEventListener("click",function(){
-            document.querySelector("#udp").checked = true;
-            port.style.display = 'flex';
-            prot = "udp";
+            if(port.style.display == 'flex'){
+                document.querySelector("#udp").checked = false;
+                port.style.display = 'none';
+                port.innerHTML = `
+                        <legend>Port</legend>
+                        <div id="btt-prot">
+                            <abbr title="Add port"><button id="add" type="button">+</button></abbr>
+                            <abbr title="Reduce port"><button id="remove" type="button">-</button></abbr>
+                        </div>
+                        <div id="ports">    
+                        </div>
+                `;
+                prot = "";
+            }
+            else{
+                document.querySelector("#udp").checked = true;
+                port.style.display = 'flex';
+                prot = "udp";
+            }
         });
         blc_ddp.addEventListener("click",function(){
-            document.querySelector("#ddp").checked = true;
-            port.style.display = 'flex';
-            prot = "ddp";
+            if(port.style.display == 'flex'){
+                document.querySelector("#ddp").checked = false;
+                port.style.display = 'none';
+                port.innerHTML = `
+                        <legend>Port</legend>
+                        <div id="btt-prot">
+                            <abbr title="Add port"><button id="add" type="button">+</button></abbr>
+                            <abbr title="Reduce port"><button id="remove" type="button">-</button></abbr>
+                        </div>
+                        <div id="ports">    
+                        </div>
+                `;
+                prot = "";
+            }
+            else{
+                document.querySelector("#ddp").checked = true;
+                port.style.display = 'flex';
+                prot = "ddp";
+            }
         });
         blc_icmp.addEventListener("click",function(){
-            document.querySelector("#icmp").checked = true;
+            if(port.style.display == 'flex'){
+                document.querySelector("#icmp").checked = false;
+            }
+            else{
+                document.querySelector("#icmp").checked = true;
+                port.innerHTML = `
+                        <legend>Port</legend>
+                        <div id="btt-prot">
+                            <abbr title="Add port"><button id="add" type="button">+</button></abbr>
+                            <abbr title="Reduce port"><button id="remove" type="button">-</button></abbr>
+                        </div>
+                        <div id="ports">    
+                        </div>
+                `;
+            }
             port.style.display = 'none';
         });
 

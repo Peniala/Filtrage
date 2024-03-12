@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 ////////////////////////////////////////////////////////////////// Fonction Log ////////////////////////////////////////////////////////////////////
 
@@ -40,7 +41,7 @@ function verifyAdd(){
 			setAlert("rules.php?","hide","");
 		}
 		else{
-			makeSessionAdd();
+			$mess = makeSessionAdd();
 			setAlert("rules.php?action=add&","block",$mess);
 		}
 	}
@@ -157,6 +158,7 @@ function makeSessionAdd(){
 	else{
 		$_SESSION["dest"] = serialize(["none"]);
 	}
+	return $mess;
 }
 
 ///////////////////////////////////////////////////////////////////// Fonction dans Status ///////////////////////////////////////////////////////////
@@ -165,8 +167,8 @@ function makeSessionAdd(){
 
 function displayRules($chain){
 	$rules = getRulesByChain();
-	if($chain == 'input' || $chain == 'output') $j = 6;
-	else $j = 2;
+	// if($chain == 'input' || $chain == 'output') $j = 6;
+	// else $j = 2;
 
 	echo "
 		<div class=\"title\">Target</div>
@@ -178,14 +180,11 @@ function displayRules($chain){
 		<div class=\"title\">Action</div>
 		";
 
-	for(; $j < count($rules[$chain])-1; $j++){
+	for($j = 2; $j < count($rules[$chain])-1; $j++){
+		foreach($rules[$chain][$j] as $value){
+			echo "<div> $value </div>";
+		}
 		echo "
-			<div>$rules[$chain][$j]['acces'];</div>
-			<div>$rules[$chain][$j]['prot']</div>
-			<div>$rules[$chain][$j]['opt']</div>
-			<div>$rules[$chain][$j]['src']</div>
-			<div>$rules[$chain][$j]['dest']</div>
-			<div>$rules[$chain][$j]['oth']</div>
 			<div class=\"action\">
 				<a href=\"rules.php?action=mod&chain=$chain&rule=$j\"><button type=\"button\">Mod</button></a>
 				<a href=\"status.php?action=del&chain=$chain&rule=$j\"><button type=\"button\">Del</button></a>
@@ -425,64 +424,65 @@ function getInterface(){
 
 // Fonction de verification requete sur les policies
 
-function verifyPolicy(){
+function verifyPolicy($choice,$pIn,$pFor,$pOut){
 
 	$url = "policy.php?";
 	$modif = "";
+	$cmd = "sudo iptables -P ";
 
 	$policy = getPolicy();
 	$pInput = $policy[0];
 	$pForward = $policy[1];
 	$pOutput = $policy[2];
 
-	if(!isset($_GET["choice"]) && (isset($_GET["pInput"]) || isset($_GET["pForward"]) || isset($_GET["pOutput"]))){
+	if(!isset($choice) && (isset($pIn) || isset($pFor) || isset($pOut))){
 		$i = 0;
 		$change = 0;
 
-		if(isset($_GET["pInput"])){
-			if($pInput != $_GET["pInput"]){
-				$modif = "<div>Change INPUT policy ".$pInput." into ".$_GET["pInput"]."</div>";
+		if(isset($pIn)){
+			if($pInput != $pIn){
+				$modif = "<div>Change INPUT policy ".$pInput." into ".$pIn."</div>";
 				$change = 1;
 			}
-			$url = $url."pInput=".$_GET["pInput"];
+			$url = $url."pInput=".$pIn;
 			$i++;
 		}
-		if(isset($_GET["pForward"])){
+		if(isset($pFor)){
 			if($pForward != $_GET["pForward"]){ 
-				$modif = $modif."<div>Change FORWARD policy ".$pForward." into ".$_GET["pForward"]."</div>";
+				$modif = $modif."<div>Change FORWARD policy ".$pForward." into ".$pFor."</div>";
 				$change = 1;
 			}
 			if($i == 0){ 
-				$url = $url."pForward=".$_GET["pForward"]; 
+				$url = $url."pForward=".$pFor; 
 				$i++;
 			}
-			else $url = $url."&pForward=".$_GET["pForward"];
+			else $url = $url."&pForward=".$pFor;
 		}
-		if(isset($_GET["pOutput"])){
-			if($pOutput != $_GET["pOutput"]){ 
-				$modif = $modif."<div>Change OUTPUT policy ".$pOutput." into ".$_GET["pOutput"]."</div>";
+		if(isset($pOut)){
+			if($pOutput != $pOut){ 
+				$modif = $modif."<div>Change OUTPUT policy ".$pOutput." into ".$pOut."</div>";
 				$change = 1;
 			}
 			if($i == 0){ 
-				$url = $url."pOutput=".$_GET["pOutput"]; 
+				$url = $url."pOutput=".$pOut; 
 				$i++;
 			}
-			else $url = $url."&pOutput=".$_GET["pOutput"];
+			else $url = $url."&pOutput=".$pOut;
 		}
 		$url = $url."&";
 		if($change == 1) setAlert($url,"block",$modif);
 	}
-	else if(isset($_GET["choice"]) && $_GET["choice"] == "yes"){
-		if(isset($_GET["pInput"])){
-			$pInput = $_GET["pInput"];
+	else if(isset($choice) && $choice == "yes"){
+		if(isset($pIn)){
+			$pInput = $pIn;
 			system($cmd."INPUT ".$pInput);
 		}
-		if(isset($_GET["pForward"])){
-			$pForward = $_GET["pForward"];
+		if(isset($pFor)){
+			$pForward = $pFor;
 			system($cmd."FORWARD ".$pForward);
 		}
-		if(isset($_GET["pOutput"])){
-			$pOutput = $_GET["pOutput"];
+		if(isset($pOut)){
+			$pOutput = $pOut;
 			system($cmd."OUTPUT ".$pOutput);
 		}
 		setAlert($url,"hide","Yes");

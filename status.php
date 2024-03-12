@@ -40,7 +40,7 @@
             <legend><div id="view-forw">Chain Policy : Forward <?php echo $policy[1];?></div></legend>
             <div class="each-rule" id="forward">
                 <?php
-                    displayRules('forward')
+                    displayRules('forward');
                 ?>
             </div>
         </fieldset>

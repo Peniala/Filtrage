@@ -4,7 +4,7 @@
 
     verifyUserConnection();
 
-    $policy = verifyPolicy();
+    $policy = verifyPolicy($_GET["choice"],$_GET["pInput"],$_GET["pForward"],$_GET["pOutput"]);
 
     $pInput = $policy[0];
     $pForward = $policy[1];
