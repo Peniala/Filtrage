@@ -27,141 +27,23 @@ function verifyUserConnection(){
 	}
 }
 
-////////////////////////////////////////////////////////////////// Fonction sur Rules //////////////////////////////////////////////////////////////
-
-// Fonction de verification requete ajout
-
-function verifyAdd(){
-	if(isset($_GET["action"]) && $_GET["action"] != "mod"){
-		if(isset($_GET["choice"])){
-			if($_GET["choice"] == "yes"){
-				addRules($_SESSION["chain"],$_SESSION["target"],$_SESSION["interf"],unserialize($_SESSION["protocol"]),unserialize($_SESSION["src"]),unserialize($_SESSION["dest"]));
-				resetSession();
-			}
-			setAlert("rules.php?","hide","");
-		}
-		else{
-			$mess = makeSessionAdd();
-			setAlert("rules.php?action=add&","block",$mess);
-		}
-	}
-}
-
-// Fonction de réinitialisation variable SESSION
-
-function resetSession(){
-	$_SESSION["chain"] = NULL;
-	$_SESSION["target"] = NULL;
-	$_SESSION["interf"] = NULL;
-	$_SESSION["protocol"] = NULL;
-	$_SESSION["src"] = NULL;
-	$_SESSION["dest"] = NULL;
-}
-
-// Fonction d'ajout de règles
-
-function addRules($chain,$target,$interf,$protocol,$src,$dest){
-	$cmd = translateRulesToCmd($chain,$target,$interf,$protocol,$src,$dest);
-	if(strpos($cmd,"--sport")){
-		system($cmd);
-		$cmd[strpos($cmd,"--sport")+2] = 'd';
-		system($cmd);
-	}
-	else if(strpos($cmd,"--dport")){
-		system($cmd);
-		$cmd[strpos($cmd,"--dport")+2] = 's';
-		system($cmd);
-	}
-	else{
-		system($cmd);
-	}
-}
-
-// Fonction d'ajout de session pour l'ajout de règles
-
-function makeSessionAdd(){
-	$mess = "Add a ";
-	if(isset($_GET["chain"])){
-		$_SESSION["chain"] = $_GET["chain"];
-		$mess .= "chain ".$_GET["chain"];
-	}
-	if(isset($_GET["target"])){
-		$_SESSION["target"] = $_GET["target"];
-		$mess .= " with ".$_GET["target"]." acces";
-	}
-	if(isset($_GET["inter"]) && !empty($_GET["inter"])){
-		$_SESSION["interf"] = $_GET["inter"];
-		$mess .= " on ".$_GET["inter"]." interface";
-	}
-	else{
-		$_SESSION["interf"] = "none";  
-	}
-	if(isset($_GET["protocol"])){
-		$prt = [];				// pour l'ensemble
-		$i = 1;
-		$port = "port".$i;		// liste de ports
-		$ports = [];
-		$p = "";
-		$prot = $_GET["protocol"];
-		$mess .= " with the ".$_GET["protocol"]." protocol";
-		$prt[0] =  $prot;
-		if(isset($_GET[$port])){
-			while(isset($_GET[$port])){
-				$ports[] = $_GET[$port];
-				$i++;
-				$port = "port".$i;
-			}
-			for($j=0; $j < count($ports)-1; $j++){
-				$p .= $ports[$j].',';
-			}
-			$p .= $ports[count($ports)-1];
-			$prt[1] = $p;
-			$mess .= ": ".$p." port";
-		}
-		else{
-			$prt[1] = "none";
-		}
-		$_SESSION["protocol"] = serialize($prt);
-	}
-	else{
-		$_SESSION["protocol"] = serialize(["none"]);
-	}
-	if(isset($_GET["src"]) && $_GET["src"] == "on"){    
-		$s = [];
-		$s[0] = $_GET["src"];
-		if(isset($_GET["sMac"])){
-			$s[1] = "on";
-		}
-		else{
-			$s[1] = "off";
-		}
-		$s[2] = $_GET["smachine"];
-		$mess .= " from ".$_GET["smachine"];
-		$_SESSION["src"] = serialize($s);
-	}
-	else{
-		$_SESSION["src"] = serialize(["none"]);
-	}
-	if(isset($_GET["dest"]) && $_GET["dest"] == "on"){
-		$d = [];
-		$d[0] = $_GET["dest"];
-		if(isset($_GET["dMac"])){
-			$d[1] = "on";
-		}
-		else{
-			$d[1] = "off";
-		}
-		$d[2] = $_GET["dmachine"];
-		$mess .= " to ".$_GET["dmachine"];
-		$_SESSION["dest"] = serialize($d);
-	}
-	else{
-		$_SESSION["dest"] = serialize(["none"]);
-	}
-	return $mess;
-}
-
 ///////////////////////////////////////////////////////////////////// Fonction dans Status ///////////////////////////////////////////////////////////
+
+//// Fonction de verification requete pour modification
+
+function verifyModify(){
+	if($_GET["action"] == "mod" && !isset($_GET["choice"])){
+		$mess = makeSession();
+		$_SESSION["nbrule"] = $_GET["rule"];
+		setAlert("status.php?action=mod&","show","Modify "."qqlchose to ".$mess);
+	}
+	else if($_GET["action"] == "mod" && isset($_GET["choice"])){
+		replace()
+		resetSession();
+		$_SESSION["nbrule"] = NULL;
+		setAlert("status.php?action=save&","hide","");
+	}
+}
 
 //// Fonction d'affichage
 
@@ -195,7 +77,7 @@ function displayRules($chain){
 
 // Fonction de modification de règles 
 
-function replace($chain,$target,$interf,$protocol,$src,$dest){
+function replace($nbrule,$chain,$target,$interf,$protocol,$src,$dest){
 	$cmd = translateRulesToCmd($chain,$target,$interf,$protocol,$src,$dest);
 	$newRules = "";
 	$j = strlen($chain);
@@ -208,10 +90,10 @@ function replace($chain,$target,$interf,$protocol,$src,$dest){
 // Fonction de verification requete pour enregistrement
 
 function verifySave(){
-	if($_GET["action"] == "save" && empty($_GET["choice"])){
+	if($_GET["action"] == "save" && !isset($_GET["choice"])){
 		setAlert("status.php?action=save&","show","Save rules");
 	}
-	else if($_GET["action"] == "save" && !empty($_GET["choice"])){
+	else if($_GET["action"] == "save" && isset($_GET["choice"])){
 		if($_GET["choice"] == "yes"){
 			save();
 		}
@@ -323,6 +205,138 @@ function resetRules($rules){
 	}
 }
 ///////////////////////////////////////////////////////////////////// Fonction sur la page Rules /////////////////////////////////////////////////////
+
+// Fonction de verification requete ajout
+
+function verifyAdd(){
+	if(isset($_GET["action"]) && $_GET["action"] != "mod"){
+		if(isset($_GET["choice"])){
+			if($_GET["choice"] == "yes"){
+				addRules($_SESSION["chain"],$_SESSION["target"],$_SESSION["interf"],unserialize($_SESSION["protocol"]),unserialize($_SESSION["src"]),unserialize($_SESSION["dest"]));
+				resetSession();
+			}
+			setAlert("rules.php?","hide","");
+		}
+		else{
+			$mess = makeSession();
+			setAlert("rules.php?action=add&","block","Add ".$mess);
+		}
+	}
+}
+
+// Fonction de réinitialisation variable SESSION
+
+function resetSession(){
+	$_SESSION["chain"] = NULL;
+	$_SESSION["target"] = NULL;
+	$_SESSION["interf"] = NULL;
+	$_SESSION["protocol"] = NULL;
+	$_SESSION["src"] = NULL;
+	$_SESSION["dest"] = NULL;
+}
+
+// Fonction d'ajout de règles
+
+function addRules($chain,$target,$interf,$protocol,$src,$dest){
+	$cmd = translateRulesToCmd($chain,$target,$interf,$protocol,$src,$dest);
+	if(strpos($cmd,"--sport")){
+		system($cmd);
+		$cmd[strpos($cmd,"--sport")+2] = 'd';
+		system($cmd);
+	}
+	else if(strpos($cmd,"--dport")){
+		system($cmd);
+		$cmd[strpos($cmd,"--dport")+2] = 's';
+		system($cmd);
+	}
+	else{
+		system($cmd);
+	}
+}
+
+// Fonction d'ajout de session pour l'ajout de règles
+
+function makeSession(){
+	$mess = "";
+	if(isset($_GET["chain"])){
+		$_SESSION["chain"] = $_GET["chain"];
+		$mess .= " a chain ".$_GET["chain"];
+	}
+	if(isset($_GET["target"])){
+		$_SESSION["target"] = $_GET["target"];
+		$mess .= " with ".$_GET["target"]." acces";
+	}
+	if(isset($_GET["inter"]) && !empty($_GET["inter"])){
+		$_SESSION["interf"] = $_GET["inter"];
+		$mess .= " on ".$_GET["inter"]." interface";
+	}
+	else{
+		$_SESSION["interf"] = "none";  
+	}
+	if(isset($_GET["protocol"])){
+		$prt = [];				// pour l'ensemble
+		$i = 1;
+		$port = "port".$i;		// liste de ports
+		$ports = [];
+		$p = "";
+		$prot = $_GET["protocol"];
+		$mess .= " with the ".$_GET["protocol"]." protocol";
+		$prt[0] =  $prot;
+		if(isset($_GET[$port])){
+			while(isset($_GET[$port])){
+				$ports[] = $_GET[$port];
+				$i++;
+				$port = "port".$i;
+			}
+			for($j=0; $j < count($ports)-1; $j++){
+				$p .= $ports[$j].',';
+			}
+			$p .= $ports[count($ports)-1];
+			$prt[1] = $p;
+			$mess .= ": ".$p." port";
+		}
+		else{
+			$prt[1] = "none";
+		}
+		$_SESSION["protocol"] = serialize($prt);
+	}
+	else{
+		$_SESSION["protocol"] = serialize(["none"]);
+	}
+	if(isset($_GET["src"]) && $_GET["src"] == "on"){    
+		$s = [];
+		$s[0] = $_GET["src"];
+		if(isset($_GET["sMac"])){
+			$s[1] = "on";
+		}
+		else{
+			$s[1] = "off";
+		}
+		$s[2] = $_GET["smachine"];
+		$mess .= " from ".$_GET["smachine"];
+		$_SESSION["src"] = serialize($s);
+	}
+	else{
+		$_SESSION["src"] = serialize(["none"]);
+	}
+	if(isset($_GET["dest"]) && $_GET["dest"] == "on"){
+		$d = [];
+		$d[0] = $_GET["dest"];
+		if(isset($_GET["dMac"])){
+			$d[1] = "on";
+		}
+		else{
+			$d[1] = "off";
+		}
+		$d[2] = $_GET["dmachine"];
+		$mess .= " to ".$_GET["dmachine"];
+		$_SESSION["dest"] = serialize($d);
+	}
+	else{
+		$_SESSION["dest"] = serialize(["none"]);
+	}
+	return $mess;
+}
 
 // Fonction pour lire les lines des règles déja ajoutés
 function getRules(){

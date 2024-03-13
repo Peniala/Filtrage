@@ -43,8 +43,8 @@
                     }    
                 ?>
                 <div class="block target-rules">
-                    <select name="chain" class="hover-style">
-                        <option value="" disabled>Chain</option>
+                    <select name="chain" class="hover-style" required>
+                        <option value="" >Chain</option>
                         <option value="INPUT">INPUT</option>
                         <option value="FORWARD">FORWARD</option>
                         <option value="OUTPUT">OUTPUT</option>
@@ -57,8 +57,7 @@
                         <label for="drop">DROP</label>
                     </fieldset>
                     <select name="inter" id="interf" class="hover-style">
-                        <option value="" disabled>Interface available</option>
-                        <option value="" ></option>
+                        <option value="">Interface available</option>
                         <?php
                             foreach(getInterface() as $inter){
                         ?>
@@ -132,6 +131,15 @@
         </fieldset>
     </section>
     <script>
+
+        const smac = document.querySelector("#sMac");
+        const dmac = document.querySelector("#dMac");
+        
+        if(smac.checked){
+            console.log("smac");
+        }
+        ///////// Evenement sur les destinataires et sources
+
         const src = document.querySelector("#src");
         const dest = document.querySelector("#dest");
 
@@ -139,7 +147,7 @@
             if(document.querySelector(".source").style.display == 'flex'){
                 document.querySelector(".source").style.display = 'none';
                 document.querySelector("#s").checked = false;
-                document.querySelector("#sMac").checked = false;
+                smac.checked = false;
             }
             else{
                 document.querySelector(".source").style.display = 'flex';
@@ -150,7 +158,7 @@
             if(document.querySelector(".destination").style.display == 'flex'){
                 document.querySelector(".destination").style.display = 'none';
                 document.querySelector("#d").checked = false;
-                document.querySelector("#dMac").checked = false;
+                dMac.checked = false;
             }
             else{
                 document.querySelector(".destination").style.display = 'flex';
@@ -158,99 +166,66 @@
             }
         });
 
-        const port = document.querySelector(".with-add");
-
+        /////////// evenement sur les radio protocols
         const blc_tcp = document.querySelector("#blc-tcp");
         const blc_udp = document.querySelector("#blc-udp");
         const blc_ddp = document.querySelector("#blc-ddp");
         const blc_icmp = document.querySelector("#blc-icmp");
+        const port = document.querySelector(".with-add");
 
         let prot = "";
 
         blc_tcp.addEventListener("click",function(){
-            if(port.style.display == 'flex'){
+            if(port.style.display == 'flex' && prot == "tcp"){
                 document.querySelector("#tcp").checked = false;
                 port.style.display = 'none';
-                port.innerHTML = `
-                        <legend>Port</legend>
-                        <div id="btt-prot">
-                            <abbr title="Add port"><button id="add" type="button">+</button></abbr>
-                            <abbr title="Reduce port"><button id="remove" type="button">-</button></abbr>
-                        </div>
-                        <div id="ports">    
-                        </div>
-                `;
                 prot = "";
             }
             else{
                 document.querySelector("#tcp").checked = true;
-                port.style.display = 'flex';
+                document.querySelector(".with-add").style.display = 'flex';
                 prot = "tcp";
+                document.querySelector("#ports").innerHTML = ``;
             }
         });
         blc_udp.addEventListener("click",function(){
-            if(port.style.display == 'flex'){
+            if(port.style.display == 'flex'  && prot == "udp"){
                 document.querySelector("#udp").checked = false;
                 port.style.display = 'none';
-                port.innerHTML = `
-                        <legend>Port</legend>
-                        <div id="btt-prot">
-                            <abbr title="Add port"><button id="add" type="button">+</button></abbr>
-                            <abbr title="Reduce port"><button id="remove" type="button">-</button></abbr>
-                        </div>
-                        <div id="ports">    
-                        </div>
-                `;
                 prot = "";
             }
             else{
                 document.querySelector("#udp").checked = true;
                 port.style.display = 'flex';
                 prot = "udp";
+                document.querySelector("#ports").innerHTML = ``;
             }
         });
         blc_ddp.addEventListener("click",function(){
-            if(port.style.display == 'flex'){
+            if(port.style.display == 'flex'  && prot == "ddp"){
                 document.querySelector("#ddp").checked = false;
                 port.style.display = 'none';
-                port.innerHTML = `
-                        <legend>Port</legend>
-                        <div id="btt-prot">
-                            <abbr title="Add port"><button id="add" type="button">+</button></abbr>
-                            <abbr title="Reduce port"><button id="remove" type="button">-</button></abbr>
-                        </div>
-                        <div id="ports">    
-                        </div>
-                `;
                 prot = "";
             }
             else{
                 document.querySelector("#ddp").checked = true;
                 port.style.display = 'flex';
                 prot = "ddp";
+                document.querySelector("#ports").innerHTML = ``;
             }
         });
         blc_icmp.addEventListener("click",function(){
-            if(port.style.display == 'flex'){
+            if(document.querySelector("#icmp").checked == true){
                 document.querySelector("#icmp").checked = false;
             }
             else{
                 document.querySelector("#icmp").checked = true;
-                port.innerHTML = `
-                        <legend>Port</legend>
-                        <div id="btt-prot">
-                            <abbr title="Add port"><button id="add" type="button">+</button></abbr>
-                            <abbr title="Reduce port"><button id="remove" type="button">-</button></abbr>
-                        </div>
-                        <div id="ports">    
-                        </div>
-                `;
             }
+            document.querySelector("#ports").innerHTML = ``;
             port.style.display = 'none';
         });
 
         // script des boutons add et remove de ports
-
         const add = document.querySelector("#add");
         const remove = document.querySelector("#remove");
 
@@ -302,6 +277,7 @@
             console.log(document.querySelector("#ports").lastChild.getAttribute("name"));
             document.querySelector("#ports").lastChild.remove();
         });
+        
     </script>
 </body>
 </html>

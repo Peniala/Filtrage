@@ -49,6 +49,9 @@ section .center form #prot{
 section .center form #prot div{
     margin: 0.2vw;
 }
+section .center form #prot div:hover{
+    cursor: pointer;
+}
 section .center form .port{
     height: 4vw;
 }

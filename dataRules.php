@@ -9,10 +9,10 @@
     verifyAdd();
 
     if(isset($_GET["action"]) && $_GET["action"] == "mod"){
-        $tilte = "Modify";
+        $title = "Modify";
     }
     else{
-        $tilte = "Add";
+        $title = "Add";
     }
     
 ?>

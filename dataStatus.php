@@ -6,6 +6,7 @@
 
     $policy = getPolicy();
 
+    verifyModify();
     verifyDelete();
     verifyReset();
     verifySave();
