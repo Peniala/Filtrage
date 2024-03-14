@@ -38,10 +38,12 @@ function verifyModify(){
 		setAlert("status.php?action=mod&","show","Modify "."qqlchose to ".$mess);
 	}
 	else if($_GET["action"] == "mod" && isset($_GET["choice"])){
-		replace()
+		if($_GET["choice"] == "yes"){
+			replace($_SESSION["nbrule"],$_SESSION["chain"],$_SESSION["target"],$_SESSION["interf"],unserialize($_SESSION["protocol"]),unserialize($_SESSION["src"]),unserialize($_SESSION["dest"]));
+		}
 		resetSession();
 		$_SESSION["nbrule"] = NULL;
-		setAlert("status.php?action=save&","hide","");
+		setAlert("status.php?action=mod&","hide","");
 	}
 }
 
@@ -66,12 +68,22 @@ function displayRules($chain){
 		foreach($rules[$chain][$j] as $value){
 			echo "<div> $value </div>";
 		}
-		echo "
-			<div class=\"action\">
-				<a href=\"rules.php?action=mod&chain=$chain&rule=$j\"><button type=\"button\">Mod</button></a>
-				<a href=\"status.php?action=del&chain=$chain&rule=$j\"><button type=\"button\">Del</button></a>
-			</div>
-			";
+		if($j > 5){
+			echo "
+				<div class=\"action\">
+					<a href=\"rules.php?action=mod&chain=$chain&rule=$j\"><button type=\"button\">Mod</button></a>
+					<a href=\"status.php?action=del&chain=$chain&rule=$j\"><button type=\"button\">Del</button></a>
+				</div>
+				";
+		}
+		else{
+			echo "
+				<div class=\"action\">
+					<a><button type=\"button\" class=\"disable\" >Mod</button></a>
+					<a><button type=\"button\" class=\"disable\">Del</button></a>
+				</div>
+				";
+		}
 	}
 }
 
@@ -84,7 +96,9 @@ function replace($nbrule,$chain,$target,$interf,$protocol,$src,$dest){
 	for($i = strpos($cmd,$chain) + $j; $i < strlen($cmd); $i++){
 		$newRules = $newRules.$cmd[$i];
 	}
-	$cmd = "sudo iptables -D ".$chain." ".$nbrule." ".$newRules;
+	$cmd = "sudo iptables -R ".$chain." ".($nbrule-1)." ".$newRules;
+	system($cmd);
+	return $cmd;
 }
 
 // Fonction de verification requete pour enregistrement
@@ -98,7 +112,6 @@ function verifySave(){
 			save();
 		}
 		setAlert("status.php?action=save&","hide","");
-	
 	}
 }
 
@@ -213,8 +226,8 @@ function verifyAdd(){
 		if(isset($_GET["choice"])){
 			if($_GET["choice"] == "yes"){
 				addRules($_SESSION["chain"],$_SESSION["target"],$_SESSION["interf"],unserialize($_SESSION["protocol"]),unserialize($_SESSION["src"]),unserialize($_SESSION["dest"]));
-				resetSession();
 			}
+			resetSession();
 			setAlert("rules.php?","hide","");
 		}
 		else{
