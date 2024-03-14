@@ -13,7 +13,7 @@
 <body>
     <section>
         <h1>Log in</h1>
-        <form action="status.php" method="post">
+        <form action="home.php" method="post">
             <input type="text" name="name" placeholder="Name">
             <input type="password" name="passwd" placeholder="Password">
             <input type="submit" value="Log in">

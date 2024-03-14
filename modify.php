@@ -1,7 +1,7 @@
 <?php
     session_start();
 
-    include "dataRules.php";
+    include "dataModify.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,34 +11,23 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="rules.css">
     <link rel="stylesheet" href="../../fontawesome-free-6.4.2-web/css/all.css">
-    <title>Add rule</title>
+    <title>Filter</title>
 </head>
 <body>
-    <nav>
-        <h1>Filter.</h1>
-        <a href="policy.php"><div class="link">Policy</div></a>
-        <a href="rules.php"><div class="link">Rules</div></a>
-        <a href="status.php"><div class="link">Status</div></a>
-        <a href=""><div class="link">Help</div></a>
-        <a href="rules.php?logout=yes"><div class="link">Log out</div></a>
-    </nav>
     <section>
         <fieldset class="center">
-            <legend class="lparts">Add rules</legend>
-            <form action="rules.php" method="get">
-                <input type="text" name="action" value="add" hidden>";>
+            <legend class="lparts">Modify rules</legend>
+            <form action="status.php" method="get">
+                <input type="text" name="action" value="add" hidden>
                 <div class="block target-rules">
                     <select name="chain" class="hover-style" required>
-                        <option value="" >Chain</option>
-                        <option value="INPUT">INPUT</option>
-                        <option value="FORWARD">FORWARD</option>
-                        <option value="OUTPUT">OUTPUT</option>
+                        <option value="<?php echo $chain;?>" selected><?php echo $chain;?></option>
                     </select>
                     <fieldset class="hover-style">
                         <legend>Target</legend>
-                        <input type="radio" name="target" id="accept" value="ACCEPT">
+                        <input type="radio" name="target" id="accept" value="ACCEPT" <?php if($target == "ACCEPT") echo "checked";?>>
                         <label for="accept">ACCEPT</label>
-                        <input type="radio" name="target" id="drop" value="DROP">
+                        <input type="radio" name="target" id="drop" value="DROP" <?php if($target == "DROP") echo "checked";?>>
                         <label for="drop">DROP</label>
                     </fieldset>
                     <select name="inter" id="interf" class="hover-style">
@@ -71,13 +60,32 @@
                             <label for="icmp">icmp</label>
                         </div>
                     </div>
-                    <fieldset class="with-add">
+                    <fieldset class="with-add" <?php if($protocol != "") echo 'style="display: flex;"';?>>
                         <legend>Port</legend>
                         <div id="btt-prot">
                             <abbr title="Add port"><button id="add" type="button">+</button></abbr>
                             <abbr title="Reduce port"><button id="remove" type="button">-</button></abbr>
                         </div>
-                        <div id="ports">    
+                        <div id="ports">
+                            <?php
+                                if(!empty($rule[$_GET["chain"]][$nbrule]['oth']) && $protocol !=""){
+                                    $ports = getListProtocol();
+                                    foreach($ports[$protocol] as $service => $value){
+                                        if(strpos($rules[$_GET["chain"]][$nbrule]['oth'],$service)){
+                                            echo '<select name="port'.$nbports.'" id="">';
+                                            foreach($prts[$protocol] as $s => $v){
+                                                echo '<option value="$value"';
+                                                if($s == $service){
+                                                    echo "selected";
+                                                }
+                                                echo '>'.$protocol.' '.$s.' '.$v.'</option>';
+                                            }
+                                            echo "</select>";
+                                            $nbports++;
+                                        }
+                                    }
+                                }
+                            ?>
                         </div>
                     </fieldset>
                 </fieldset>
@@ -87,9 +95,9 @@
                         <label for="s">Source</label>
                     </legend>
                     <div class="type-machine source">
-                        <input type="text" name="smachine" placeholder="Enter value">
+                        <input type="text" name="smachine" value="<?php echo $scr;?>" placeholder="Enter value">
                         <div id="radioSMac">
-                            <input type="radio" name="sMac" id="sMac" >
+                            <input type="radio" name="sMac" id="sMac" <?php echo $smac;?>>
                             <label for="sMac">MAC</label>
                         </div>
                     </div>
@@ -100,9 +108,9 @@
                         <label for="d">Destinataire</label>
                     </legend>
                     <div class="type-machine destination">
-                        <input type="text" name="dmachine" placeholder="Enter value">
+                        <input type="text" name="dmachine" value="<?php echo $dest;?>" placeholder="Enter value">
                         <div id="radioDMac">
-                            <input type="radio" name="dMac" id="dMac" >
+                            <input type="radio" name="dMac" id="dMac" <?php echo $dmac;?>>
                             <label for="dMac">MAC</label>
                         </div>
                     </div>
@@ -227,7 +235,7 @@
         const add = document.querySelector("#add");
         const remove = document.querySelector("#remove");
 
-        let index = 1;
+        let index = <?php echo $nbports;?>;
 
         add.addEventListener("click",(event) => {
             const select = document.createElement("select");            
