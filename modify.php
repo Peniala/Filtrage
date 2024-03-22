@@ -18,7 +18,7 @@
         <fieldset class="center">
             <legend class="lparts">Modify rules</legend>
             <form action="status.php" method="get">
-                <input type="text" name="action" value="add" hidden>
+                <input type="text" name="action" value="mod" hidden>
                 <div class="block target-rules">
                     <select name="chain" class="hover-style" required>
                         <option value="<?php echo $chain;?>" selected><?php echo $chain;?></option>
@@ -44,23 +44,23 @@
                     <legend>Protocol</legend>
                     <div id="prot">
                         <div id="blc-tcp">
-                            <input type="radio" name="protocol" class="p" id="tcp" value="tcp">
+                            <input type="radio" name="protocol" class="p" id="tcp" value="tcp" <?php if($protocol == "tcp") echo "checked";?>>
                             <label for="tcp">tcp</label>
                         </div>
                         <div id="blc-udp">
-                            <input type="radio" name="protocol" class="p" id="udp" value="udp">
+                            <input type="radio" name="protocol" class="p" id="udp" value="udp" <?php if($protocol == "udp") echo "checked";?>>
                             <label for="udp">udp</label>
                         </div>
                         <div id="blc-ddp">
-                            <input type="radio" name="protocol" class="p" id="ddp" value="ddp">
+                            <input type="radio" name="protocol" class="p" id="ddp" value="ddp" <?php if($protocol == "ddp") echo "checked";?>>
                             <label for="ddp">ddp</label>
                         </div>
                         <div id="blc-icmp">
-                            <input type="radio" name="protocol" class="p" id="icmp" value="icmp">
+                            <input type="radio" name="protocol" class="p" id="icmp" value="icmp" <?php if($protocol == "icmp") echo "checked";?>>
                             <label for="icmp">icmp</label>
                         </div>
                     </div>
-                    <fieldset class="with-add" <?php if($protocol != "") echo 'style="display: flex;"';?>>
+                    <fieldset class="with-add" <?php if($protocol != "" && $protocol != "icmp") echo 'style="display: flex;"';?>>
                         <legend>Port</legend>
                         <div id="btt-prot">
                             <abbr title="Add port"><button id="add" type="button">+</button></abbr>
@@ -72,11 +72,11 @@
                                     $ports = getListProtocol();
                                     foreach($ports[$protocol] as $service => $value){
                                         if(strpos($rules[$_GET["chain"]][$nbrule]['oth'],$service)){
-                                            echo '<select name="port'.$nbports.'" id="">';
-                                            foreach($prts[$protocol] as $s => $v){
+                                            echo '<select name="port'.$nbports.'" class="port">';
+                                            foreach($ports[$protocol] as $s => $v){
                                                 echo '<option value="$value"';
                                                 if($s == $service){
-                                                    echo "selected";
+                                                    echo " selected";
                                                 }
                                                 echo '>'.$protocol.' '.$s.' '.$v.'</option>';
                                             }
@@ -91,10 +91,10 @@
                 </fieldset>
                 <fieldset class="hover-style">
                     <legend id="src">
-                        <input type="checkbox" name="src" id="s">
+                        <input type="checkbox" name="src" id="s" <?php if($scr != "" || $smac != "") echo "checked";?>>
                         <label for="s">Source</label>
                     </legend>
-                    <div class="type-machine source">
+                    <div class="type-machine source"  <?php if($scr != "" || $smac != "") echo 'style="display: flex;"';?>>
                         <input type="text" name="smachine" value="<?php echo $scr;?>" placeholder="Enter value">
                         <div id="radioSMac">
                             <input type="radio" name="sMac" id="sMac" <?php echo $smac;?>>
@@ -104,10 +104,10 @@
                 </fieldset>
                 <fieldset class="hover-style">
                     <legend id="dest">
-                        <input type="checkbox" name="dest" id="d">
+                        <input type="checkbox" name="dest" id="d" <?php if($dest != "" || $dmac != "") echo "checked";?>>
                         <label for="d">Destinataire</label>
                     </legend>
-                    <div class="type-machine destination">
+                    <div class="type-machine destination"  <?php if($scr != "" || $smac != "") echo 'style="display: flex;"';?>>
                         <input type="text" name="dmachine" value="<?php echo $dest;?>" placeholder="Enter value">
                         <div id="radioDMac">
                             <input type="radio" name="dMac" id="dMac" <?php echo $dmac;?>>
@@ -128,22 +128,22 @@
         const smac = document.querySelector("#radioSMac");
         const dmac = document.querySelector("#radioDMac");
         
-        smac.addEventListener("click",(){
-            if(document.querySelector("#sMac").checked == true){
-                document.querySelector("#sMac").checked = false;
-            }
-            else{
-                document.querySelector("#sMac").checked = true;
-            }
-        });
-        dmac.addEventListener("click",(){
-            if(document.querySelector("#dMac").checked == true){
-                document.querySelector("#dMac").checked = false;
-            }
-            else{
-                document.querySelector("#dMac").checked = true;
-            }
-        });
+        // smac.addEventListener("click",{
+        //     if(document.querySelector("#sMac").checked == true){
+        //         document.querySelector("#sMac").checked = false;
+        //     }
+        //     else{
+        //         document.querySelector("#sMac").checked = true;
+        //     }
+        // });
+        // dmac.addEventListener("click",{
+        //     if(document.querySelector("#dMac").checked == true){
+        //         document.querySelector("#dMac").checked = false;
+        //     }
+        //     else{
+        //         document.querySelector("#dMac").checked = true;
+        //     }
+        // });
         ///////// Evenement sur les destinataires et sources
 
         const src = document.querySelector("#src");

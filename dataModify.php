@@ -22,16 +22,16 @@
 
     $target = $rules[$_GET["chain"]][$nbrule]['acces'];
 
-    if(strpos($rules[$_GET["chain"]][$nbrule]['prot'],"tcp")){
+    if($rules[$_GET["chain"]][$nbrule]['prot'] == "tcp"){
         $protocol = "tcp";
     }
-    else if(strpos($rules[$_GET["chain"]][$nbrule]['prot'],"tcp")){
+    else if($rules[$_GET["chain"]][$nbrule]['prot'] == "udp"){
         $protocol = "udp";
     }
-    else if(strpos($rules[$_GET["chain"]][$nbrule]['prot'],"tcp")){
+    else if($rules[$_GET["chain"]][$nbrule]['prot'] == "ddp"){
         $protocol = "ddp";
     }
-    else if(strpos($rules[$_GET["chain"]][$nbrule]['prot'],"tcp")){
+    else if($rules[$_GET["chain"]][$nbrule]['prot'] == "icmp"){
         $protocol = "icmp";
     }
     else{
@@ -52,15 +52,15 @@
         $dest = "";
     }
 
-    if(strpos($rules[$_GET["chain"]][$nbrule]['oth'],"MAC") && $scr == ""){
-        $smac = "selected";
+    if(strpos($rules[$_GET["chain"]][$nbrule]['oth'],"MAC") && (strpos($rules[$_GET["chain"]][$nbrule]['oth'],"sports") || strpos($rules[$_GET["chain"]][$nbrule]['oth'],"spt")) && $scr == ""){
+        $smac = "checked";
     }
     else{
         $smac = "";
     }
 
-    if(strpos($rules[$_GET["chain"]][$nbrule]['oth'],"MAC") && $dest == ""){
-        $dmac = "selected";
+    if(strpos($rules[$_GET["chain"]][$nbrule]['oth'],"MAC") && (strpos($rules[$_GET["chain"]][$nbrule]['oth'],"dports") || strpos($rules[$_GET["chain"]][$nbrule]['oth'],"dpt")) && $dest == ""){
+        $dmac = "checked";
     }
     else{
         $dmac = "";

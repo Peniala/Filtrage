@@ -26,7 +26,7 @@
         <fieldset class="center">
             <legend class="lparts">Add rules</legend>
             <form action="rules.php" method="get">
-                <input type="text" name="action" value="add" hidden>";>
+                <input type="text" name="action" value="add" hidden>
                 <div class="block target-rules">
                     <select name="chain" class="hover-style" required>
                         <option value="" >Chain</option>
@@ -109,7 +109,7 @@
                 </fieldset>
                 <div class="under">
                     <div class="over">
-                        <i class="fa-sharp fa-solid fa-check" ></i><input type="submit" value="Modify">
+                        <i class="fa-sharp fa-solid fa-check" ></i><input type="submit" value="Valid">
                     </div>
                 </div>       
             </form>
@@ -119,23 +119,23 @@
 
         const smac = document.querySelector("#radioSMac");
         const dmac = document.querySelector("#radioDMac");
-        
-        smac.addEventListener("click",(){
-            if(document.querySelector("#sMac").checked == true){
-                document.querySelector("#sMac").checked = false;
-            }
-            else{
-                document.querySelector("#sMac").checked = true;
-            }
-        });
-        dmac.addEventListener("click",(){
-            if(document.querySelector("#dMac").checked == true){
-                document.querySelector("#dMac").checked = false;
-            }
-            else{
-                document.querySelector("#dMac").checked = true;
-            }
-        });
+
+        // smac.addEventListener("click",{
+        //     // if(document.querySelector("#sMac").checked == true){
+        //         // document.querySelector("#sMac").checked = false;
+        //     // }
+        //     // else{
+        //         document.querySelector("#sMac").checked = true;
+        //     // }
+        // });
+        // dmac.addEventListener("click",{
+        //     // if(document.querySelector("#dMac").checked == true){
+        //         // document.querySelector("#dMac").checked = false;
+        //     // }
+        //     // else{
+        //         document.querySelector("#dMac").checked = true;
+        //     // }
+        // });
         ///////// Evenement sur les destinataires et sources
 
         const src = document.querySelector("#src");

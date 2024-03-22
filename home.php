@@ -1,3 +1,8 @@
+<?php
+    session_start();
+    include "function.php";
+    verifyUserConnection();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

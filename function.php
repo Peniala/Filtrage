@@ -67,23 +67,23 @@ function displayRules($chain){
 	for($j = 2; $j < count($rules[$chain])-1; $j++){
 		foreach($rules[$chain][$j] as $value){
 			echo "<div> $value </div>";
-		}
-		if($j > 5){
+		// }
+		// if($j > 5){
 			echo "
 				<div class=\"action\">
-					<a href=\"rules.php?action=mod&chain=$chain&rule=$j\"><button type=\"button\">Mod</button></a>
+					<a href=\"modify.php?action=mod&chain=$chain&rule=$j\"><button type=\"button\">Mod</button></a>
 					<a href=\"status.php?action=del&chain=$chain&rule=$j\"><button type=\"button\">Del</button></a>
 				</div>
 				";
-		}
-		else{
-			echo "
-				<div class=\"action\">
-					<a><button type=\"button\" class=\"disable\" >Mod</button></a>
-					<a><button type=\"button\" class=\"disable\">Del</button></a>
-				</div>
-				";
-		}
+		// }
+		// else{
+		// 	echo "
+		// 		<div class=\"action\">
+		// 			<a><button type=\"button\" class=\"disable\" >Mod</button></a>
+		// 			<a><button type=\"button\" class=\"disable\">Del</button></a>
+		// 		</div>
+		// 		";
+		// }
 	}
 }
 
